@@ -4462,9 +4462,11 @@
                                     <span style="font-weight: 700; font-family: monospace; font-size: 7.2pt; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 2px;" title="${p.no_peserta || '-'}">${p.no_peserta || '-'}</span>
                                   </div>
 
-                                  <!-- Baris 2: Nama Peserta (Proporsional di Tengah) -->
-                                  <div style="font-weight: 800; font-size: 8pt; line-height: 1.25; color: #000000; text-align: center; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0;" title="${p.nama}">
-                                    ${p.nama}
+                                  <!-- Baris 2: Nama Peserta (Mendukung 2 Baris untuk Nama Panjang) -->
+                                  <div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px 0;">
+                                    <div style="font-weight: 800; font-size: 7.8pt; line-height: 1.18; color: #000000; text-align: center; text-transform: uppercase; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;" title="${p.nama}">
+                                      ${p.nama}
+                                    </div>
                                   </div>
 
                                   <!-- Baris 3: Kelas Sekolah & Diniyyah (Bawah Kiri & Kanan) -->
