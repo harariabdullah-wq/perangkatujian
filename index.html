@@ -235,7 +235,6 @@
       width: 215mm;
       min-height: 330mm;
       padding: 10mm 10mm 10mm 10mm;
-      /*  */
       margin: 0 auto 24px auto;
       background: #FFFFFF;
       color: #000000;
@@ -246,6 +245,29 @@
       position: relative;
       page-break-after: always;
       break-after: page;
+    }
+
+    .f4-sheet.landscape-sheet,
+    .f4-sheet[data-orientation="landscape"] {
+      width: 330mm !important;
+      min-height: 215mm !important;
+      padding: 10mm 10mm 10mm 10mm !important;
+      margin: 0 auto 24px auto !important;
+    }
+
+    .a4-sheet {
+      width: 210mm !important;
+      min-height: 297mm !important;
+      max-height: 297mm !important;
+      padding: 10mm 10mm 10mm 10mm !important;
+      margin: 0 auto 24px auto !important;
+      background: #FFFFFF !important;
+      box-sizing: border-box !important;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08) !important;
+      border: 1px solid #CBD5E1 !important;
+      position: relative !important;
+      page-break-after: always !important;
+      break-after: page !important;
     }
 
     .f4-sheet * {
@@ -385,6 +407,7 @@
       #print-root .a4-sheet {
         min-height: 0 !important;
         margin: 0 !important;
+        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
         page-break-after: always !important;
@@ -392,16 +415,17 @@
         box-sizing: border-box !important;
       }
 
-      #print-root .f4-sheet:not(.landscape-sheet),
-      #print-root .a4-sheet:not(.landscape-sheet) {
+      #print-root .f4-sheet:not(.landscape-sheet):not([data-orientation="landscape"]),
+      #print-root .a4-sheet:not(.landscape-sheet):not([data-orientation="landscape"]) {
         width: 100% !important;
       }
 
       #print-root .landscape-sheet,
       #print-root [data-orientation="landscape"] {
-        width: 330mm !important;
-        min-height: 215mm !important;
-        margin: 0 auto !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       #print-root .f4-sheet:last-child,
@@ -2761,7 +2785,7 @@
       const femaleGridCols = femaleRooms.length <= 4 ? 2 : (femaleRooms.length <= 6 ? 3 : 4);
 
       return `
-        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 6mm 8mm 5mm 8mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
+        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
           ${renderKopSuratF4('REKAPITULASI JUMLAH SISWA SEKOLAH PER RUANGAN (RUANG 01 – 12)')}
 
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 2px; margin-bottom: 4px; font-size: 8pt; font-weight: 600;">
@@ -2839,7 +2863,7 @@
       const femaleGridCols = femaleRooms.length <= 4 ? 2 : (femaleRooms.length <= 6 ? 3 : 4);
 
       return `
-        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 6mm 8mm 5mm 8mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
+        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
           ${renderKopSuratF4('REKAPITULASI JUMLAH SISWA DINIYYAH PER RUANGAN (RUANG 01 – 12)')}
 
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 2px; margin-bottom: 4px; font-size: 8pt; font-weight: 600;">
@@ -2917,7 +2941,7 @@
       const femaleGridCols = femaleRooms.length <= 4 ? 2 : (femaleRooms.length <= 6 ? 3 : 4);
 
       return `
-        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 6mm 8mm 5mm 8mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
+        <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; page-break-after: always; break-after: page; box-sizing: border-box; background: #ffffff; color: #000000; margin: 0 auto 24px auto;">
           ${renderKopSuratF4('REKAPITULASI JUMLAH PESERTA UJIAN PER RUANGAN (RUANG 01 – 12)')}
 
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 2px; margin-bottom: 5px; font-size: 8pt; font-weight: 600;">
@@ -3077,7 +3101,7 @@
       const isSampulSoal = state.activeMenu === 'sampul_soal';
       const isSampulRuangan = state.activeMenu === 'sampul_ruangan';
       const isRekapActive = isRuanganDenah && state.selectedRoom === 'REKAP_RUANGAN';
-      const isAllRoomsModule = isRuanganDenah || isLabelMeja || isSampulSoal || isSampulRuangan;
+      const isAllRoomsModule = isRuanganDenah || isLabelMeja || isSampulSoal || isSampulRuangan || (state.activeMenu === 'berita_acara');
       const isAllActive = isAllRoomsModule && state.selectedRoom === 'ALL';
       return `
         <div class="no-print bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-indigo-100/70 shadow-sm mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -3121,33 +3145,78 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="window.appActions.printPreview()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Cetak langsung lembar aktif">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-              Cetak F4
-            </button>
-            <button type="button" onclick="window.appActions.bulkPrint()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-green-700 hover:opacity-95 text-white text-xs font-extrabold transition shadow-md shadow-teal-600/25 inline-flex items-center gap-1.5 active:scale-95" title="Cetak seluruh lembar untuk semua ruangan sekaligus ke printer">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-              Cetak Seluruhnya
-            </button>
-            <button type="button" onclick="window.appActions.saveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm shadow-blue-500/20 inline-flex items-center gap-1.5 active:scale-95" title="Simpan lembar pratinjau yang aktif ke dalam format Word .docx">
+            <!-- 🖨️ Cetak Group (Aktif | Semua) -->
+            <div class="inline-flex rounded-xl shadow-sm border border-emerald-500/40 overflow-hidden">
+              <button
+                type="button"
+                onclick="window.appActions.printPreview()"
+                class="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95"
+                title="Cetak lembar pratinjau yang aktif"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
+              </button>
+              <button
+                type="button"
+                onclick="window.appActions.bulkPrint()"
+                class="px-2.5 py-1.5 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition border-l border-teal-500/50 inline-flex items-center gap-1 active:scale-95"
+                title="Cetak seluruh lembar untuk semua ruangan sekaligus ke printer"
+              >
+                Semua
+              </button>
+            </div>
+
+            <!-- 📄 Word Group (.docx) -->
+            <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+              <button
+                type="button"
+                onclick="window.appActions.saveDocx()"
+                class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95"
+                title="Simpan lembar pratinjau yang aktif ke dalam format Word .docx"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Word
+              </button>
+              <button
+                type="button"
+                onclick="window.appActions.bulkSaveDocx()"
+                class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95"
+                title="Simpan seluruh ruangan ke dalam 1 file Word .docx sekaligus"
+              >
+                Semua
+              </button>
+            </div>
+
+            <!-- 📕 PDF Group -->
+            <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+              <button
+                type="button"
+                onclick="window.appActions.savePdf()"
+                class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95"
+                title="Simpan lembar pratinjau yang aktif ke dalam format PDF"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                PDF
+              </button>
+              <button
+                type="button"
+                onclick="window.appActions.bulkSavePdf()"
+                class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95"
+                title="Simpan seluruh lembar dokumen modul ini ke dalam 1 file PDF"
+              >
+                Semua
+              </button>
+            </div>
+
+            <!-- 📊 Excel Button -->
+            <button
+              type="button"
+              onclick="window.appActions.exportExcel()"
+              class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1.5 active:scale-95"
+              title="Ekspor data modul ini ke file Excel (.xlsx)"
+            >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Simpan .docx
-            </button>
-            <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-600 hover:opacity-95 text-white text-xs font-extrabold transition shadow-md shadow-teal-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh ruangan ke dalam 1 file Word .docx sekaligus">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-              Bulk Docx
-            </button>
-            <button type="button" onclick="window.appActions.exportExcel()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm shadow-emerald-600/20 inline-flex items-center gap-1.5 active:scale-95" title="Ekspor data modul ini ke file Excel (.xlsx)">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Export Excel
-            </button>
-            <button type="button" onclick="window.appActions.savePdf()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Simpan lembar pratinjau yang aktif ke dalam format PDF">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-              Simpan sebagai pdf
-            </button>
-            <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh lembar dokumen modul ini sekaligus ke dalam 1 file PDF">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-              Simpan semua sebagai pdf
+              Excel
             </button>
           </div>
         </div>
@@ -4042,39 +4111,40 @@
                   <button
                     type="button"
                     onclick="window.appActions.printPreview()"
-                    class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95 ml-1"
-                    title="Cetak langsung lembar Rekapitulasi F4 Landscape"
+                    class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95 ml-1"
+                    title="Cetak lembar Rekapitulasi F4 Landscape"
                   >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                    Cetak F4 Landscape
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                    Cetak
                   </button>
                   <button
                     type="button"
                     onclick="window.appActions.saveDocx()"
-                    class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95"
-                    title="Simpan lembar Rekapitulasi F4 Landscape ke dalam format Word .docx"
+                    class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95"
+                    title="Simpan lembar Rekapitulasi F4 Landscape ke format Word .docx"
                   >
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Simpan .docx
+                    Word
                   </button>
-                  <button
-                    type="button"
-                    onclick="window.appActions.savePdf()"
-                    class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95"
-                    title="Simpan lembar Rekapitulasi F4 Landscape ke dalam format PDF"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                    Simpan sebagai pdf
-                  </button>
-                  <button
-                    type="button"
-                    onclick="window.appActions.bulkSavePdf()"
-                    class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95"
-                    title="Simpan seluruh ruangan & lembar rekapitulasi ke dalam 1 file PDF sekaligus"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                    Simpan semua sebagai pdf
-                  </button>
+                  <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                    <button
+                      type="button"
+                      onclick="window.appActions.savePdf()"
+                      class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95"
+                      title="Simpan lembar Rekapitulasi ke dalam format PDF"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                      PDF
+                    </button>
+                    <button
+                      type="button"
+                      onclick="window.appActions.bulkSavePdf()"
+                      class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95"
+                      title="Simpan seluruh ruangan &amp; lembar rekapitulasi ke dalam 1 file PDF sekaligus"
+                    >
+                      Semua
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4636,7 +4706,7 @@
         }
 
         return `
-              <div class="f4-sheet" data-paper="F4" style="width: 215mm; min-height: 330mm; max-height: 330mm; padding: 8mm 10mm; margin: 0 auto 24px auto; background: #ffffff; box-sizing: border-box; page-break-after: always; break-after: page; position: relative;">
+              <div class="f4-sheet" data-paper="F4" style="width: 215mm; min-height: 330mm; max-height: 330mm; padding: 10mm; margin: 0 auto 24px auto; background: #ffffff; box-sizing: border-box; page-break-after: always; break-after: page; position: relative;">
                 <div style="border: 2px solid #000000; padding: 7mm 8mm; width: 100%; height: 100%; min-height: 312mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
                   <!-- Bagian 1: Kop Surat Resmi -->
                   <div style="font-family: 'Plus Jakarta Sans', sans-serif; color: #000000; border-bottom: 3px double #000000; padding-bottom: 5px; margin-bottom: 6px;">
@@ -4958,29 +5028,38 @@
                 Simpan Jadwal
               </button>
 
-              <button type="button" onclick="window.appActions.exportExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Ekspor jadwal mata pelajaran ke file Excel (.xlsx)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel (.xlsx)
+              <!-- 🖨️ Cetak -->
+              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak jadwal kelas aktif">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
 
-              <button type="button" onclick="window.appActions.printPreview()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Cetak langsung jadwal kelas">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4
-              </button>
-              <button type="button" onclick="window.appActions.saveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-sm shadow-blue-500/20 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95">
-                Simpan .docx
-              </button>
-              <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-sm shadow-teal-500/20 text-white text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh 6 jadwal kelas ke dalam 1 file Word .docx sekaligus">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Bulk Docx
-              </button>
-              <button type="button" onclick="window.appActions.savePdf()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Simpan jadwal aktif sebagai file PDF">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh 6 jadwal kelas ke dalam 1 file PDF sekaligus">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
+              <!-- 📄 Word Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Word
+                </button>
+                <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal kelas ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal kelas ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel -->
+              <button type="button" onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor jadwal mata pelajaran ke file Excel (.xlsx)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
               </button>
             </div>
           </div>
@@ -5213,25 +5292,38 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                 Simpan Jadwal Pengawas
               </button>
-              <button onclick="window.appActions.exportExcel()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Ekspor jadwal dan daftar pengawas ke file Excel (.xlsx)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel (.xlsx)
+              <!-- 🖨️ Cetak -->
+              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak jadwal pengawas">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
-              <button onclick="window.appActions.printPreview()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4 Landscape
-              </button>
-              <button onclick="window.appActions.saveDocx()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                Simpan sebagai .docx
-              </button>
-              <button onclick="window.appActions.savePdf()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh jadwal pengawas ke dalam file PDF">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
+
+              <!-- 📄 Word Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Word
+                </button>
+                <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal pengawas ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal pengawas ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel -->
+              <button type="button" onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor jadwal dan daftar pengawas ke file Excel (.xlsx)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
               </button>
             </div>
           </div>
@@ -5411,7 +5503,7 @@
 
         <!-- PRATINJAU DOKUMEN CETAK RESMI (F4 LANDSCAPE PERSIS GAMBAR) -->
         <div id="print-mount" class="overflow-x-auto pb-4">
-          <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 7mm 8mm 6mm 8mm; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: #FFFFFF; box-sizing: border-box;">
+          <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: #FFFFFF; box-sizing: border-box;">
             
             <!-- HEADER RESMI SESUAI GAMBAR CONTOH -->
             <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 5px;">
@@ -5593,32 +5685,42 @@
               <p class="text-xs text-slate-500">Lembar presensi kehadiran pengawas ruang ujian 12 ruangan otomatis tersinkronisasi dengan matriks penugasan dan kode pengawas.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <!-- Tombol Download Sekaligus Word & PDF -->
-              <button onclick="window.appActions.exportExcel()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-extrabold transition shadow-md shadow-emerald-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Ekspor daftar hadir pengawas ke file Excel (.xlsx)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel (.xlsx)
+              <!-- 🖨️ Cetak -->
+              <button onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak lembar hadir pengawas aktif">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
-              <button onclick="window.appActions.downloadAllProctorAttendanceDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-teal-700 hover:from-teal-700 hover:to-emerald-800 text-white text-xs font-extrabold transition shadow-md shadow-teal-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Download seluruh 24 sesi daftar hadir pengawas (6 Hari x 4 Sesi) sekaligus ke dalam 1 file Word .docx">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Download Sekaligus (.docx)
+
+              <!-- 📄 Word Group (.docx | Semua Sesi) -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan lembar aktif sebagai file Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Word
+                </button>
+                <button onclick="window.appActions.downloadAllProctorAttendanceDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Download seluruh 24 sesi daftar hadir pengawas ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group (Aktif | Semua Sesi) -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan lembar aktif sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Download seluruh 24 sesi daftar hadir pengawas ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel Button -->
+              <button onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor daftar hadir pengawas ke file Excel (.xlsx)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
               </button>
-              <button onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Download seluruh 24 sesi daftar hadir pengawas (6 Hari x 4 Sesi) dalam 1 file PDF">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
-              </button>
-              <button onclick="window.appActions.printPreview()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4
-              </button>
-              <button onclick="window.appActions.saveDocx()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Simpan .docx
-              </button>
-              <button onclick="window.appActions.savePdf()" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button onclick="window.appActions.setMenu('jadwal_pengawas')" class="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition inline-flex items-center gap-1.5">
+
+              <!-- 📅 Matriks -->
+              <button onclick="window.appActions.setMenu('jadwal_pengawas')" class="px-3 py-1.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition inline-flex items-center gap-1">
                 Matriks &rarr;
               </button>
             </div>
@@ -6027,7 +6129,7 @@
       const formattedDate = dayObj?.tanggal || '30 November 2026';
 
       return `
-        <div class="f4-sheet" style="padding: 8mm 12mm 7mm 12mm; page-break-after: always; break-after: page; font-family: 'Plus Jakarta Sans', Arial, sans-serif;">
+        <div class="f4-sheet" style="padding: 10mm; page-break-after: always; break-after: page; font-family: 'Plus Jakarta Sans', Arial, sans-serif;">
           
           <!-- 1. KOP SURAT AT-TAHIYYAH -->
           <div data-docx="image" style="margin-bottom: 7px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: transparent; border: none;">
@@ -6321,50 +6423,38 @@
             </button>
 
             <div class="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                onclick="window.appActions.printPreview()"
-                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95"
-                title="Cetak langsung lembar tata tertib"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4
+              <!-- 🖨️ Cetak -->
+              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak tata tertib ujian">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
-              <button
-                type="button"
-                onclick="window.appActions.saveDocx()"
-                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm shadow-blue-500/20 inline-flex items-center gap-1.5 active:scale-95"
-                title="Simpan tata tertib ke format Word .docx"
-              >
+
+              <!-- 📄 Word Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Word
+                </button>
+                <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan kedua lembar tata tertib ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan kedua lembar tata tertib ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel -->
+              <button type="button" onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor tata tertib ke format Excel .xlsx">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Simpan .docx
-              </button>
-              <button
-                type="button"
-                onclick="window.appActions.exportExcel()"
-                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm shadow-emerald-600/20 inline-flex items-center gap-1.5 active:scale-95"
-                title="Ekspor tata tertib ke format Excel .xlsx"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel
-              </button>
-              <button
-                type="button"
-                onclick="window.appActions.savePdf()"
-                class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95"
-                title="Simpan lembar pratinjau yang aktif ke dalam format PDF"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button
-                type="button"
-                onclick="window.appActions.bulkSavePdf()"
-                class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95"
-                title="Simpan kedua lembar tata tertib (peserta &amp; pengawas) ke dalam 1 file PDF"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
+                Excel
               </button>
             </div>
           </div>
@@ -6432,14 +6522,14 @@
 
     // MODUL 9: BERITA ACARA PELAKSANAAN UJIAN (10 BARIS ABSENSI ( S / I / A ) & HANYA TANDA TANGAN PENGAWAS)
     function renderModuleBeritaAcara() {
-      const roomList = getRoomParticipants(state.selectedRoom);
-      const dayObj = state.schedules[state.selectedDay] || state.schedules.Senin;
-      const slotObj = dayObj.slots.find(s => Number(s.sesi) === Number(state.selectedSesi)) || dayObj.slots[0];
-      const subjectLabel = getSlotSubjectLabel(slotObj, state.selectedScheduleUnit);
-      const assignKey = `${state.selectedDay}_${slotObj.sesi}_${state.selectedRoom} `;
-      const assignedProctors = state.proctorAssignments[assignKey] || {
-        p1: state.proctors[0]?.nama || '........................................'
-      };
+      const activeDay = state.selectedDay || 'Senin';
+      const dayObj = state.schedules[activeDay] || state.schedules.Senin;
+      const slots = dayObj?.slots || [];
+      const currentSlot = slots.find(s => Number(s.sesi) === Number(state.selectedSesi)) || slots[0];
+
+      // Ruangan yang dirender (Bisa 1 ruangan spesifik atau semua 12 ruangan)
+      const isAllRooms = state.selectedRoom === 'ALL' || !state.selectedRoom;
+      const roomsToRender = isAllRooms ? ROOM_LIST : [state.selectedRoom];
       const tenAbsentRows = Array.from({ length: 10 }, (_, idx) => idx + 1);
 
       return `
@@ -6447,105 +6537,172 @@
 
         <div class="no-print bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm mb-5 flex flex-wrap items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-3">
-            <span class="text-xs font-bold uppercase text-slate-600">Pilih Unit, Hari & Sesi Mapel Berita Acara:</span>
-            <select onchange="window.appActions.setScheduleUnit(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold">
-              <option value="MA_DINIYYAH" ${state.selectedScheduleUnit === 'MA_DINIYYAH' ? 'selected' : ''}>Jadwal MA & Diniyyah</option>
-              <option value="MTS_DINIYYAH" ${state.selectedScheduleUnit === 'MTS_DINIYYAH' ? 'selected' : ''}>Jadwal MTs & Diniyyah</option>
-            </select>
+            <span class="text-xs font-bold uppercase text-slate-600">Pilih Hari &amp; Sesi Berita Acara:</span>
             <select onchange="window.appActions.setDay(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold">
-              ${DAY_LIST.map(d => `<option value="${d}" ${state.selectedDay === d ? 'selected' : ''}>Hari ${d} (${state.schedules[d].tanggal})</option>`).join('')}
+              ${DAY_LIST.map(d => `<option value="${d}" ${state.selectedDay === d ? 'selected' : ''}>Hari ${d} (${state.schedules[d]?.tanggal || ''})</option>`).join('')}
             </select>
             <select onchange="window.appActions.setSesi(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold">
-              ${dayObj.slots.map(s => `<option value="${s.sesi}" ${Number(state.selectedSesi) === Number(s.sesi) ? 'selected' : ''}>Sesi Ke-${s.sesi}: ${getSlotSubjectLabel(s, state.selectedScheduleUnit)} (${s.waktu})</option>`).join('')}
+              ${slots.map(s => `<option value="${s.sesi}" ${Number(state.selectedSesi) === Number(s.sesi) ? 'selected' : ''}>Sesi Ke-${s.sesi} (${s.waktu || ''})</option>`).join('')}
             </select>
+          </div>
+          <div class="text-xs text-slate-500 font-medium">
+            Format resmi 1 lembar Berita Acara per ruangan dengan mata pelajaran terintegrasi.
           </div>
         </div>
 
         <div id="print-mount">
-          <div class="f4-sheet">
-            ${renderKopSuratF4("BERITA ACARA PELAKSANAAN UJIAN")}
-
-            <p style="font-size: 10.5pt; line-height: 1.5; text-align: justify; margin-bottom: 10px;">
-              Pada hari ini <strong>${state.selectedDay}</strong> tanggal <strong>${dayObj.tanggal}</strong>, telah diselenggarakan <strong>${state.settings.namaUjian}</strong> Tahun Ajaran <strong>${state.settings.tahunAjaran}</strong> dengan rincian pelaksanaan sebagai berikut:
-            </p>
-
-            <table style="width: 100%; font-size: 10.5pt; line-height: 1.48; margin-bottom: 10px; border: none;">
-              <tr>
-                <td style="width: 34%; border: none;">1. Ruang Ujian</td>
-                <td style="width: 3%; border: none;">:</td>
-                <td style="border: none; font-weight: bold;">${state.selectedRoom}</td>
-              </tr>
-              <tr>
-                <td style="border: none;">2. Mata Pelajaran (Sesi Ke-${slotObj.sesi})</td>
-                <td style="border: none;">:</td>
-                <td style="border: none; font-weight: bold;">${subjectLabel} (${Number(slotObj.sesi) === 4 ? 'Mapel Diniyyah' : 'Mapel Sekolah'})</td>
-              </tr>
-              <tr>
-                <td style="border: none;">3. Waktu Pelaksanaan</td>
-                <td style="border: none;">:</td>
-                <td style="border: none;">Pukul ${slotObj.waktu} WIB</td>
-              </tr>
-              <tr>
-                <td style="border: none;">4. Nama Pengawas Ruangan</td>
-                <td style="border: none;">:</td>
-                <td style="border: none; font-weight: bold;">${assignedProctors.p1}</td>
-              </tr>
-              <tr>
-                <td style="border: none;">5. Jumlah Peserta Terdaftar</td>
-                <td style="border: none;">:</td>
-                <td style="border: none;"><strong>${roomList.length}</strong> Peserta (Putra: ${roomList.filter(p => p.gender === 'L').length} / Putri: ${roomList.filter(p => p.gender === 'P').length})</td>
-              </tr>
-              <tr>
-                <td style="border: none;">6. Jumlah Peserta Hadir</td>
-                <td style="border: none;">:</td>
-                <td style="border: none;">.......... Peserta</td>
-              </tr>
-              <tr>
-                <td style="border: none;">7. Jumlah Peserta Tidak Hadir</td>
-                <td style="border: none;">:</td>
-                <td style="border: none;">.......... Peserta</td>
-              </tr>
-              <tr>
-                <td style="border: none; vertical-align: top; padding-top: 4px;">8. Nomor &amp; Nama Peserta Absen</td>
-                <td style="border: none; vertical-align: top; padding-top: 4px;">:</td>
-                <td style="border: none; font-size: 10pt; line-height: 1.5; padding-top: 2px;">
-                  ${tenAbsentRows.map(num => `
-                    <div data-docx="leader" style="display: flex; align-items: flex-end; gap: 6px; margin-bottom: 3px; line-height: 1.5;">
-                      <span style="width: 18px; text-align: right;">${num}.</span>
-                      <span style="flex: 1; border-bottom: 1px dotted #334155; height: 16px;"></span>
-                      <span style="font-weight: bold; letter-spacing: 0.5px; white-space: nowrap;">( S / I / A )</span>
-                    </div>
-                  `).join('')}
-                </td>
-              </tr>
-            </table>
-
-            <div style="border: 1.5px solid #000; padding: 8px 10px; margin-bottom: 12px;">
-              <div style="font-size: 10pt; font-weight: bold; margin-bottom: 4px;">Catatan Kejadian Selama Pelaksanaan Ujian di ${state.selectedRoom}:</div>
-              <div style="min-height: 42px; font-size: 10pt; border-bottom: 1px dotted #000; margin-bottom: 12px;">
-                Aman, tertib, dan lancar / Terdapat catatan khusus:
-              </div>
-              <div style="border-bottom: 1px dotted #000; margin-bottom: 4px;">&nbsp;</div>
-            </div>
-
-            <p style="font-size: 10pt; margin-bottom: 14px;">
-              Demikian Berita Acara Pelaksanaan Ujian ini dibuat dengan sesungguhnya oleh Pengawas Ruang untuk dapat dipergunakan sebagaimana mestinya.
-            </p>
-
-            <!-- Lembar Berita Acara Ujian HANYA berisi Tanda Tangan Pengawas Ruangan (1 Orang) -->
-            <table style="width: 100%; font-size: 10.5pt; border: none; margin-top: 12px; page-break-inside: avoid;">
-              <tr>
-                <td style="width: 55%; border: none;"></td>
-                <td style="width: 45%; text-align: center; border: none; vertical-align: top;">
-                  ${state.settings.kotaTanggal}<br/>
-                  Pengawas Ruang Ujian (${state.selectedRoom}),<br/><br/><br/><br/>
-                  <strong style="text-decoration: underline;">${assignedProctors.p1}</strong>
-                </td>
-              </tr>
-            </table>
-          </div>
+          ${roomsToRender.map(roomName => renderBeritaAcaraF4Sheet(roomName, activeDay, currentSlot, tenAbsentRows)).join('')}
         </div>
-    `;
+      `;
+    }
+
+    function renderBeritaAcaraF4Sheet(roomName, dayName, slotObj, tenAbsentRows) {
+      const roomList = getRoomParticipants(roomName);
+      const dayObj = state.schedules[dayName] || state.schedules.Senin;
+      const currentSlot = slotObj || dayObj.slots[0];
+      const slotSesi = Number(currentSlot.sesi) || 1;
+      const isDiniyyahSlot = (currentSlot.kategori === 'Diniyyah') || slotSesi === 4;
+
+      // Kumpulkan kelas-kelas siswa yang ada di ruangan ini
+      const classCounts = {};
+      (roomList || []).forEach(p => {
+        const raw = isDiniyyahSlot ? (p.kelas_diniyyah || '') : (p.kelas_sekolah || '');
+        const cKey = getScheduleClassKey(raw);
+        if (cKey) classCounts[cKey] = (classCounts[cKey] || 0) + 1;
+      });
+
+      const classLabels = isDiniyyahSlot ? {
+        'MTS_7': 'Ula 1', 'MTS_8': 'Ula 2', 'MTS_9': 'Ula 3',
+        'MA_10': 'Wustho 1', 'MA_11': 'Wustho 2', 'MA_12': 'Wustho 3'
+      } : {
+        'MTS_7': 'VII MTs', 'MTS_8': 'VIII MTs', 'MTS_9': 'IX MTs',
+        'MA_10': 'X MA', 'MA_11': 'XI MA', 'MA_12': 'XII MA'
+      };
+
+      const activeKeys = ['MTS_7', 'MTS_8', 'MTS_9', 'MA_10', 'MA_11', 'MA_12'].filter(k => classCounts[k]);
+
+      // Gabungkan mata pelajaran sesuai tingkat kelas yang ada di ruangan ini
+      const subjectGroups = {};
+      activeKeys.forEach(k => {
+        const sub = getSlotSubjectForClass(currentSlot, k);
+        if (!sub || sub === '-') return;
+        if (!subjectGroups[sub]) subjectGroups[sub] = [];
+        subjectGroups[sub].push(classLabels[k] || k);
+      });
+
+      const uniqueSubs = Object.keys(subjectGroups);
+      let combinedSubject = '';
+      if (uniqueSubs.length === 0) {
+        combinedSubject = currentSlot.mapel || '-';
+      } else if (uniqueSubs.length === 1) {
+        combinedSubject = uniqueSubs[0];
+      } else {
+        combinedSubject = uniqueSubs.map(sub => `${sub} (${subjectGroups[sub].join(', ')})`).join(' / ');
+      }
+
+      // Ambil data pengawas ruangan dari matriks jadwal pengawas
+      if (!state.proctorMatrix || Object.keys(state.proctorMatrix).length === 0) {
+        state.proctorMatrix = structuredClone(DEFAULT_PROCTOR_MATRIX);
+      }
+      const roomNum = parseInt(String(roomName).replace(/\D+/g, ''), 10) || 1;
+      const dayMatrix = state.proctorMatrix[dayName] || (typeof DEFAULT_PROCTOR_MATRIX !== 'undefined' && DEFAULT_PROCTOR_MATRIX[dayName]) || {};
+      const rowCodes = dayMatrix[slotSesi] || [];
+      const proctorCode = rowCodes[roomNum - 1] || '';
+      const proctorObj = (state.proctors || []).find(p => p.kode === proctorCode);
+      const namaPengawas = proctorObj ? proctorObj.nama : (proctorCode ? `Pengawas Kode ${proctorCode}` : (state.proctors[roomNum - 1]?.nama || '........................................'));
+      const nipPengawas = proctorObj?.nip || (state.proctors[roomNum - 1]?.nip) || '';
+
+      const maleCount = roomList.filter(p => p.gender === 'L').length;
+      const femaleCount = roomList.filter(p => p.gender === 'P').length;
+
+      return `
+        <div class="f4-sheet">
+          ${renderKopSuratF4("BERITA ACARA PELAKSANAAN UJIAN")}
+
+          <p style="font-size: 10.5pt; line-height: 1.5; text-align: justify; margin-bottom: 8px;">
+            Pada hari ini <strong>${dayName}</strong> tanggal <strong>${dayObj.tanggal}</strong>, telah diselenggarakan <strong>${state.settings.namaUjian}</strong> Tahun Ajaran <strong>${state.settings.tahunAjaran}</strong> dengan rincian pelaksanaan sebagai berikut:
+          </p>
+
+          <table style="width: 100%; font-size: 10pt; line-height: 1.45; margin-bottom: 8px; border: none;">
+            <tr>
+              <td style="width: 32%; border: none;">1. Ruang Ujian</td>
+              <td style="width: 3%; border: none;">:</td>
+              <td style="border: none; font-weight: bold;">${roomName}</td>
+            </tr>
+            <tr>
+              <td style="border: none; vertical-align: top;">2. Mata Pelajaran (Sesi Ke-${slotSesi})</td>
+              <td style="border: none; vertical-align: top;">:</td>
+              <td style="border: none; font-weight: bold;">
+                ${combinedSubject}
+                <span style="font-weight: normal; font-size: 9pt; color: #475569;">(${isDiniyyahSlot ? 'Mapel Diniyyah' : 'Mapel Sekolah'})</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="border: none;">3. Waktu Pelaksanaan</td>
+              <td style="border: none;">:</td>
+              <td style="border: none;">Pukul ${currentSlot.waktu} WIB</td>
+            </tr>
+            <tr>
+              <td style="border: none;">4. Nama Pengawas Ruangan</td>
+              <td style="border: none;">:</td>
+              <td style="border: none; font-weight: bold;">${namaPengawas}</td>
+            </tr>
+            <tr>
+              <td style="border: none;">5. Jumlah Peserta Terdaftar</td>
+              <td style="border: none;">:</td>
+              <td style="border: none;"><strong>${roomList.length}</strong> Peserta (Putra: ${maleCount} / Putri: ${femaleCount})</td>
+            </tr>
+            <tr>
+              <td style="border: none;">6. Jumlah Peserta Hadir</td>
+              <td style="border: none;">:</td>
+              <td style="border: none;">.......... Peserta</td>
+            </tr>
+            <tr>
+              <td style="border: none;">7. Jumlah Peserta Tidak Hadir</td>
+              <td style="border: none;">:</td>
+              <td style="border: none;">.......... Peserta</td>
+            </tr>
+            <tr>
+              <td style="border: none; vertical-align: top; padding-top: 3px;">8. Nomor &amp; Nama Peserta Absen</td>
+              <td style="border: none; vertical-align: top; padding-top: 3px;">:</td>
+              <td style="border: none; font-size: 9.5pt; line-height: 1.45; padding-top: 2px;">
+                ${tenAbsentRows.map(num => `
+                  <div data-docx="leader" style="display: flex; align-items: flex-end; gap: 6px; margin-bottom: 2.5px; line-height: 1.4;">
+                    <span style="width: 18px; text-align: right;">${num}.</span>
+                    <span style="flex: 1; border-bottom: 1px dotted #334155; height: 15px;"></span>
+                    <span style="font-weight: bold; letter-spacing: 0.5px; white-space: nowrap;">( S / I / A )</span>
+                  </div>
+                `).join('')}
+              </td>
+            </tr>
+          </table>
+
+          <div style="border: 1.5px solid #000; padding: 7px 10px; margin-bottom: 10px;">
+            <div style="font-size: 9.5pt; font-weight: bold; margin-bottom: 3px;">Catatan Kejadian Selama Pelaksanaan Ujian di ${roomName}:</div>
+            <div style="min-height: 38px; font-size: 9.5pt; border-bottom: 1px dotted #000; margin-bottom: 10px;">
+              Aman, tertib, dan lancar / Terdapat catatan khusus:
+            </div>
+            <div style="border-bottom: 1px dotted #000; margin-bottom: 2px;">&nbsp;</div>
+          </div>
+
+          <p style="font-size: 9.5pt; margin-bottom: 10px;">
+            Demikian Berita Acara Pelaksanaan Ujian ini dibuat dengan sesungguhnya oleh Pengawas Ruang untuk dapat dipergunakan sebagaimana mestinya.
+          </p>
+
+          <!-- Tanda Tangan Pengawas Ruangan Tunggal -->
+          <table style="width: 100%; font-size: 10pt; border: none; margin-top: 10px; page-break-inside: avoid;">
+            <tr>
+              <td style="width: 55%; border: none;"></td>
+              <td style="width: 45%; text-align: center; border: none; vertical-align: top;">
+                ${state.settings.kotaTanggal}<br/>
+                Pengawas Ruang Ujian (${roomName}),<br/><br/><br/><br/>
+                <strong style="text-decoration: underline;">${namaPengawas}</strong>
+                ${nipPengawas ? `<div style="font-size: 9pt; margin-top: 2px;">NIP. ${nipPengawas}</div>` : ''}
+              </td>
+            </tr>
+          </table>
+        </div>
+      `;
     }
 
     // MODUL 10: ABSENSI SISWA BERDASARKAN NAMA YANG ADA PADA RUANGAN
@@ -6666,8 +6823,19 @@
 
       const noteLines = (state.settings.catatanLembarNilai || '').split('\n').map(s => s.trim()).filter(Boolean);
 
+      // Pembagian Halaman: Jika peserta > 25 orang, buat 2 halaman F4 (Kop tetap ada di tiap halaman)
+      const MAX_PER_PAGE = 25;
+      const chunks = [];
+      if (classParticipants.length > MAX_PER_PAGE) {
+        // Halaman 1 berisi 25 siswa pertama, Halaman 2 berisi sisanya
+        chunks.push(classParticipants.slice(0, MAX_PER_PAGE));
+        chunks.push(classParticipants.slice(MAX_PER_PAGE));
+      } else {
+        chunks.push(classParticipants);
+      }
+
       return `
-      <div class="no-print bg-white rounded-xl p-4 border border-slate-200 shadow-sm mb-5 space-y-4" >
+        <div class="no-print bg-white rounded-xl p-4 border border-slate-200 shadow-sm mb-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-xs font-bold uppercase text-slate-600">Pilih Format Nilai:</span>
@@ -6708,112 +6876,149 @@
               </div>
             </div>
 
-<div class="flex items-center gap-2 flex-wrap">
-              <button type="button" onclick="window.appActions.printPreview()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Cetak langsung lembar nilai">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- 🖨️ Cetak -->
+              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak lembar nilai kelas aktif">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
-              <button type="button" onclick="window.appActions.saveDocx()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-sm shadow-blue-500/20 text-white text-xs font-bold transition inline-flex items-center gap-1.5">Simpan sebagai .docx</button>
-              <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 shadow-sm shadow-teal-500/20 text-white text-xs font-bold transition inline-flex items-center gap-1.5" title="Simpan seluruh kelas lembar nilai ke dalam file Word">Bulk Docx</button>
-              <button type="button" onclick="window.appActions.exportExcel()" class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Ekspor daftar nilai ke file Excel (.xlsx)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export Excel (.xlsx)
-              </button>
-              <button type="button" onclick="window.appActions.savePdf()" class="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan seluruh kelas lembar nilai sekaligus ke dalam 1 file PDF">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
+
+              <!-- 📄 Word Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Word
+                </button>
+                <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh kelas lembar nilai ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button type="button" onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh kelas lembar nilai ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel -->
+              <button type="button" onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor data nilai ke file Excel (.xlsx)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
               </button>
             </div>
           </div>
 
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+          <!-- Input Catatan Bawah -->
+          <div class="space-y-1.5">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold uppercase text-indigo-600">Catatan Bagian Bawah Lembar Nilai (Dapat Dimodifikasi):</label>
+              <label class="text-xs font-bold text-slate-600 uppercase">Catatan Tambahan di Bawah Tabel:</label>
               <button onclick="window.appActions.saveCatatanNilai()" class="px-3 py-1 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-sm shadow-indigo-500/20 text-white text-xs font-bold transition">
                 Simpan Catatan Bawah
               </button>
             </div>
             <textarea
               id="input-catatan-nilai"
-              rows="3"
+              rows="2"
               placeholder="Tulis catatan di bagian bawah lembar nilai..."
               class="w-full p-2.5 rounded-lg border border-slate-300 text-xs leading-relaxed bg-white focus:outline-none focus:border-indigo-400"
             >${state.settings.catatanLembarNilai || ''}</textarea>
           </div>
         </div>
 
-      <div id="print-mount">
-        <div class="f4-sheet">
-          ${renderKopSuratF4(`DAFTAR NILAI UJIAN ${jenisLabel} — KELAS ${activeClass.toUpperCase()}`)}
+        <div id="print-mount">
+          ${chunks.map((chunk, pageIdx) => {
+            const isLastPage = pageIdx === chunks.length - 1;
+            const startNumber = pageIdx * MAX_PER_PAGE;
+            const pageSubtitle = chunks.length > 1 ? ` (HALAMAN ${pageIdx + 1}/${chunks.length})` : '';
+            const isDin = state.selectedKelasType === 'DINIYYAH';
 
-          <table style="width: 100%; font-size: 10pt; margin-bottom: 10px; border: none;">
-            <tr>
-              <td style="border: none; width: 52%;"><strong>Jenjang / Format:</strong> ${jenisLabel}</td>
-              <td style="border: none; width: 48%;"><strong>Mata Pelajaran:</strong> ${activeSubject}</td>
-            </tr>
-            <tr>
-              <td style="border: none;"><strong>Kelas:</strong> ${activeClass} (${classParticipants.length} Peserta)</td>
-              <td style="border: none;"><strong>Guru Pengampu / Korektor:</strong> ................................................</td>
-            </tr>
-          </table>
+            return `
+              <div class="f4-sheet">
+                ${renderKopSuratF4(`DAFTAR NILAI UJIAN ${jenisLabel} — KELAS ${activeClass.toUpperCase()}${pageSubtitle}`)}
 
-          <table class="f4-table" style="font-size: 10pt; line-height: 1.15; --tpy: 3px;">
-            <thead>
-              <tr>
-                <th style="width: ${state.selectedKelasType === 'DINIYYAH' ? '18%' : '24%'};">Nomor Peserta</th>
-                <th style="width: ${state.selectedKelasType === 'DINIYYAH' ? '34%' : '40%'};">Nama</th>
-                <th style="width: ${state.selectedKelasType === 'DINIYYAH' ? '16%' : '18%'};">${state.selectedKelasType === 'DINIYYAH' ? 'Kelas Diniyyah' : 'Kelas'}</th>
-                ${state.selectedKelasType === 'DINIYYAH' ? `<th style="width: 16%;">Kelas Sekolah</th>` : ''}
-                <th style="width: ${state.selectedKelasType === 'DINIYYAH' ? '16%' : '18%'};">Nilai Akhir</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${classParticipants.length === 0 ? `
+                <table style="width: 100%; font-size: 10pt; margin-bottom: 8px; border: none; line-height: 1.45;">
                   <tr>
-                    <td colspan="${state.selectedKelasType === 'DINIYYAH' ? 5 : 4}" style="text-align: center; padding: 20px; font-style: italic;">
-                      Belum ada peserta terdaftar untuk kategori ${jenisLabel} (${activeClass}). Tambahkan peserta dengan kelas ${state.selectedKelasType === 'MA' ? 'MA (misal: MA X-A)' : state.selectedKelasType === 'MTS' ? 'MTs (misal: MTs IX-A)' : 'Diniyyah (misal: Wustho 3A)'} di menu Data Master.
+                    <td style="border: none; width: 50%;"><strong>Jenjang / Format:</strong> ${jenisLabel}</td>
+                    <td style="border: none; width: 50%;">
+                      <strong>Mata Pelajaran:</strong> ${activeSubject === '................................................' ? '<span style="border-bottom: 1.2px dotted #000; display: inline-block; width: 180px; vertical-align: bottom;">&nbsp;</span>' : activeSubject}
                     </td>
                   </tr>
-                ` : classParticipants.map((p) => {
-        const isDin = state.selectedKelasType === 'DINIYYAH';
-        const kelasVal = isDin ? p.kelas_diniyyah : p.kelas_sekolah;
-        return `
-                    <tr>
-                      <td style="text-align: center; font-weight: bold; line-height: 1.15;">${p.no_peserta}</td>
-                      <td style="font-weight: bold; line-height: 1.15;">${p.nama}</td>
-                      <td style="text-align: center; line-height: 1.15;">${kelasVal}</td>
-                      ${isDin ? `<td style="text-align: center; font-weight: bold; line-height: 1.15; color: #047857;">${p.kelas_sekolah || '-'}</td>` : ''}
-                      <td style="text-align: center; line-height: 1.15;">&nbsp;</td>
+                  <tr>
+                    <td style="border: none;"><strong>Kelas:</strong> ${activeClass} (${classParticipants.length} Peserta)</td>
+                    <td style="border: none;">
+                      <strong>Guru Pengampu / Korektor:</strong> <span style="border-bottom: 1.2px dotted #000; display: inline-block; width: 180px; vertical-align: bottom;">&nbsp;</span>
+                    </td>
+                  </tr>
+                </table>
+
+                <table class="f4-table" style="font-size: 9.5pt; line-height: 1.15; --tpy: 2.5px;">
+                  <thead>
+                    <tr style="background: #f8fafc;">
+                      <th style="width: 5%; text-align: center; padding: 4px 2px;">No</th>
+                      <th style="width: ${isDin ? '18%' : '22%'}; text-align: center; padding: 4px 3px;">Nomor Peserta</th>
+                      <th style="width: ${isDin ? '35%' : '41%'}; text-align: left; padding: 4px 6px;">Nama Siswa</th>
+                      <th style="width: ${isDin ? '14%' : '18%'}; text-align: center; padding: 4px 3px;">${isDin ? 'Kelas Diniyyah' : 'Kelas'}</th>
+                      ${isDin ? `<th style="width: 14%; text-align: center; padding: 4px 3px;">Kelas Sekolah</th>` : ''}
+                      <th style="width: ${isDin ? '14%' : '14%'}; text-align: center; padding: 4px 3px;">Nilai Akhir</th>
                     </tr>
-                  `;
-      }).join('')}
-            </tbody>
-          </table>
+                  </thead>
+                  <tbody>
+                    ${chunk.length === 0 ? `
+                      <tr>
+                        <td colspan="${isDin ? 6 : 5}" style="text-align: center; padding: 20px; font-style: italic;">
+                          Belum ada peserta terdaftar untuk kategori ${jenisLabel} (${activeClass}). Tambahkan peserta dengan kelas ${state.selectedKelasType === 'MA' ? 'MA' : state.selectedKelasType === 'MTS' ? 'MTs' : 'Diniyyah'} di menu Data Master.
+                        </td>
+                      </tr>
+                    ` : chunk.map((p, idx) => {
+                      const noUrut = startNumber + idx + 1;
+                      const kelasVal = isDin ? p.kelas_diniyyah : p.kelas_sekolah;
+                      return `
+                        <tr>
+                          <td style="text-align: center; font-weight: bold; padding: 2.5px 2px;">${noUrut}</td>
+                          <td style="text-align: center; font-weight: bold; font-family: monospace; letter-spacing: 0.3px; padding: 2.5px 3px;">${p.no_peserta || '-'}</td>
+                          <td style="font-weight: bold; padding: 2.5px 6px; text-transform: uppercase;">${p.nama || '-'}</td>
+                          <td style="text-align: center; padding: 2.5px 3px;">${kelasVal || '-'}</td>
+                          ${isDin ? `<td style="text-align: center; font-weight: bold; color: #047857; padding: 2.5px 3px;">${p.kelas_sekolah || '-'}</td>` : ''}
+                          <td style="text-align: center; padding: 2.5px 3px;">&nbsp;</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
 
-          <div style="border: 1.5px solid #000; padding: 8px 10px; margin-top: 12px; font-size: 9.5pt; line-height: 1.15; page-break-inside: avoid;">
-            <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px;">Catatan:</div>
-            ${noteLines.length === 0 ? `<div>-</div>` : noteLines.map(line => `<div style="margin-bottom: 2px;">${line}</div>`).join('')}
-          </div>
+                ${!isLastPage ? `
+                  <div style="text-align: right; font-size: 8.5pt; font-style: italic; color: #475569; margin-top: 10px;">
+                    * Bersambung ke Halaman ${pageIdx + 2}...
+                  </div>
+                ` : `
+                  <div style="border: 1.5px solid #000; padding: 6px 10px; margin-top: 10px; font-size: 9pt; line-height: 1.25; page-break-inside: avoid;">
+                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">Catatan:</div>
+                    ${noteLines.length === 0 ? `<div>-</div>` : noteLines.map(line => `<div>${line}</div>`).join('')}
+                  </div>
 
-          <!-- Pada Draft / Lembar Nilai HANYA ada TTD Guru Mata Pelajaran -->
-          <table style="width: 100%; margin-top: 18px; border: none; font-size: 10.5pt; page-break-inside: avoid;">
-            <tr>
-              <td style="width: 55%; border: none;"></td>
-              <td style="width: 45%; text-align: center; border: none; vertical-align: top;">
-                ${state.settings.kotaTanggal}<br />
-                Guru Mata Pelajaran,<br /><br /><br /><br />
-                <strong>( ........................................................ )</strong><br />
-                NIP/NIY. ........................................
-              </td>
-            </tr>
-          </table>
+                  <!-- Tanda Tangan Guru Mata Pelajaran -->
+                  <table style="width: 100%; margin-top: 12px; border: none; font-size: 10pt; page-break-inside: avoid;">
+                    <tr>
+                      <td style="width: 55%; border: none;"></td>
+                      <td style="width: 45%; text-align: center; border: none; vertical-align: top;">
+                        ${state.settings.kotaTanggal}<br />
+                        Guru Mata Pelajaran,<br /><br /><br /><br />
+                        <div style="font-weight: bold; text-decoration: underline;">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</div>
+                        <div style="font-size: 9pt; margin-top: 3px;">NIP/NIY. ....................................................</div>
+                      </td>
+                    </tr>
+                  </table>
+                `}
+              </div>
+            `;
+          }).join('')}
         </div>
-      </div>
-    `;
+      `;
     }
 
     // MODUL 12: PENGATURAN KOP SURAT & TTD DIGITAL (KEPALA MA, KEPALA MTs, KEPALA DINIYYAH & KETUA PANITIA)
@@ -7014,7 +7219,7 @@
     function renderDeskLabel(p) {
       if (!p) {
         return `
-          <div style="width: 64.5mm; height: 47mm; box-sizing: border-box; border: 1px dashed #cbd5e1; border-radius: 6px; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 7pt; font-style: italic;">
+          <div style="width: 62mm; height: 44.5mm; box-sizing: border-box; border: 1px dashed #cbd5e1; border-radius: 5px; background: #fafafa; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 7pt; font-style: italic;">
             (Label Kosong)
           </div>
         `;
@@ -7026,7 +7231,7 @@
       const diniyyahClean = (p.kelas_diniyyah || '-').replace(/ulya/gi, 'Wustho');
 
       return `
-        <div style="width: 64.5mm; height: 47mm; box-sizing: border-box; border: 1.5px solid #0f172a; border-radius: 6px; padding: 2.2mm 2.8mm; background: #ffffff; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; page-break-inside: avoid; text-align: left; font-family: inherit;">
+        <div style="width: 62mm; height: 44.5mm; box-sizing: border-box; border: 1.5px solid #0f172a; border-radius: 5px; padding: 1.8mm 2.4mm; background: #ffffff; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; page-break-inside: avoid; text-align: left; font-family: inherit;">
           <!-- Header Bar -->
           <div style="border-bottom: 1.2px solid #0f172a; padding-bottom: 1.5px; display: flex; justify-content: space-between; align-items: center;">
             <div style="line-height: 1.1;">
@@ -7131,7 +7336,7 @@
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 uppercase">Kertas A4</span>
               </div>
               <p class="text-xs text-slate-500 mt-0.5">
-                Stiker label meja ukuran <strong>64.5 × 47 mm</strong> disusun proporsional dalam format <strong>3 Kolom × 6 Baris (18 Label per Lembar A4)</strong>.
+                Stiker label meja ukuran <strong>62 × 44.5 mm</strong> disusun proporsional dalam format <strong>3 Kolom × 6 Baris (18 Label per Lembar A4, Margin 1 cm)</strong>.
               </p>
             </div>
           </div>
@@ -7159,19 +7364,19 @@
           rows.push(sheetItems.slice(r, r + 3));
         }
         return `
-              <div class="a4-sheet" data-paper="A4" style="width: 210mm; min-height: 297mm; max-height: 297mm; padding: 3.5mm 5.75mm; margin: 0 auto 24px auto; background: #ffffff; box-sizing: border-box; page-break-after: always; break-after: page; position: relative;">
-                <table style="width: 100%; border-collapse: separate; border-spacing: 2.5mm 1.5mm; border: none; margin: 0 auto;">
+              <div class="a4-sheet" data-paper="A4" style="width: 210mm; min-height: 297mm; max-height: 297mm; padding: 10mm; margin: 0 auto 24px auto; background: #ffffff; box-sizing: border-box; page-break-after: always; break-after: page; position: relative;">
+                <table style="width: 190mm; border-collapse: separate; border-spacing: 2mm 2mm; border: none; margin: 0 auto;">
                   <tbody>
                     ${rows.map(row => `
                       <tr>
                         ${row.map(p => `
-                          <td style="width: 64.5mm; height: 47mm; padding: 0; border: none; vertical-align: top;">
+                          <td style="width: 62mm; height: 44.5mm; padding: 0; border: none; vertical-align: top;">
                             ${renderDeskLabel(p)}
                           </td>
                         `).join('')}
                         ${row.length < 3 ? Array(3 - row.length).fill(0).map(() => `
-                          <td style="width: 64.5mm; height: 47mm; padding: 0; border: none; vertical-align: top;">
-                            <div style="width: 64.5mm; height: 47mm; border: 1px dashed #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 7pt; font-style: italic;">
+                          <td style="width: 62mm; height: 44.5mm; padding: 0; border: none; vertical-align: top;">
+                            <div style="width: 62mm; height: 44.5mm; border: 1px dashed #cbd5e1; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 7pt; font-style: italic;">
                               (Label Kosong)
                             </div>
                           </td>
@@ -7292,25 +7497,38 @@
               <p class="text-xs text-slate-500">Pencatatan dan pencetakan daftar hadir ujian susulan bagi siswa yang berhalangan hadir pada jadwal utama.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="window.appActions.printPreview()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Cetak F4
+              <!-- 🖨️ Cetak -->
+              <button onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak daftar ujian susulan">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Cetak
               </button>
-              <button onclick="window.appActions.saveDocx()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                Simpan sebagai .docx
-              </button>
-              <button onclick="window.appActions.bulkSaveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-600 hover:opacity-95 text-white text-xs font-extrabold transition shadow-md shadow-teal-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan dokumen ujian susulan ke dalam Word">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Bulk Docx
-              </button>
-              <button onclick="window.appActions.savePdf()" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                Simpan sebagai pdf
-              </button>
-              <button onclick="window.appActions.bulkSavePdf()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-rose-700 hover:from-rose-600 hover:to-pink-800 text-white text-xs font-extrabold transition shadow-md shadow-rose-500/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan dokumen ujian susulan ke dalam 1 file PDF">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
-                Simpan semua sebagai pdf
+
+              <!-- 📄 Word Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
+                <button onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file Word .docx">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  Word
+                </button>
+                <button onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh ujian susulan ke dalam 1 file Word .docx">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📕 PDF Group -->
+              <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
+                <button onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                  PDF
+                </button>
+                <button onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh ujian susulan ke dalam 1 file PDF">
+                  Semua
+                </button>
+              </div>
+
+              <!-- 📊 Excel -->
+              <button onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor data ujian susulan ke file Excel (.xlsx)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
               </button>
             </div>
           </div>
@@ -7456,7 +7674,7 @@
 
         <!-- PRATINJAU DOKUMEN CETAK RESMI F4 (DENGAN KOLOM PARAF DI PALING KANAN & TANPA KOLOM TTD DI BAWAH) -->
         <div id="print-mount">
-          <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm 10mm 12mm;">
+          <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm;">
             ${renderKopSuratF4('DAFTAR PESERTA UJIAN SUSULAN')}
 
             <div style="text-align: center; font-size: 9.5pt; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -7763,12 +7981,13 @@
         dynStyle.id = 'dynamic-print-page-style';
         document.head.appendChild(dynStyle);
       }
+      // Margin 1, 1, 1, 1 (10mm) pada semua layout cetak (F4 Portrait, F4 Landscape, A4 Portrait)
       if (isLandscape) {
-        dynStyle.innerHTML = '@page { size: 330mm 215mm; margin: 5mm; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+        dynStyle.innerHTML = '@page { size: 330mm 215mm; margin: 10mm; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
       } else if (isA4) {
-        dynStyle.innerHTML = '@page { size: A4 portrait; margin: 0; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+        dynStyle.innerHTML = '@page { size: 210mm 297mm; margin: 10mm; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
       } else {
-        dynStyle.innerHTML = '@page { size: 215mm 330mm; margin: 8mm; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+        dynStyle.innerHTML = '@page { size: 215mm 330mm; margin: 10mm; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
       }
     }
 
@@ -8518,8 +8737,9 @@
           const isLandscape = sheet.classList.contains('landscape-sheet') || sheet.dataset.orientation === 'landscape';
           const twipsWidth = isLandscape ? (isA4 ? 16838 : 18709) : (isA4 ? 11906 : 12189);
           const twipsHeight = isLandscape ? (isA4 ? 11906 : 12189) : (isA4 ? 16838 : 18709);
-          const twipsMarginTopBottom = isLandscape ? 340 : (isA4 ? 283 : 567);
-          const twipsMarginLeftRight = isLandscape ? 340 : (isA4 ? 312 : 567);
+          // Margin 1, 1, 1, 1 cm (1 cm = 567 twips) untuk seluruh format F4 & A4
+          const twipsMarginTopBottom = 567;
+          const twipsMarginLeftRight = 567;
           const targetTwipW = twipsWidth - (twipsMarginLeftRight * 2);
           const ctx = { contentW, k: targetTwipW / contentW, maxImgH: 1000 };
           const items = await dxBlockChildren(sheet, ctx);
