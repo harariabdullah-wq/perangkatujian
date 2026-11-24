@@ -3077,7 +3077,8 @@
       const isSampulSoal = state.activeMenu === 'sampul_soal';
       const isSampulRuangan = state.activeMenu === 'sampul_ruangan';
       const isRekapActive = isRuanganDenah && state.selectedRoom === 'REKAP_RUANGAN';
-      const isAllActive = (isLabelMeja || isSampulSoal || isSampulRuangan) && state.selectedRoom === 'ALL';
+      const isAllRoomsModule = isRuanganDenah || isLabelMeja || isSampulSoal || isSampulRuangan;
+      const isAllActive = isAllRoomsModule && state.selectedRoom === 'ALL';
       return `
         <div class="no-print bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-indigo-100/70 shadow-sm mb-5 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2.5 flex-wrap">
@@ -3086,7 +3087,7 @@
               Pilih Ruangan:
             </span>
             <div class="inline-flex flex-wrap gap-1.5 bg-slate-50/80 p-1.5 rounded-xl border border-slate-200/60">
-              ${(isLabelMeja || isSampulSoal) ? `
+              ${isAllRoomsModule ? `
                 <button
                   type="button"
                   onclick="window.appActions.selectRoom('ALL')"
@@ -3123,6 +3124,10 @@
             <button type="button" onclick="window.appActions.printPreview()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Cetak langsung lembar aktif">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
               Cetak F4
+            </button>
+            <button type="button" onclick="window.appActions.bulkPrint()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 via-emerald-600 to-green-700 hover:opacity-95 text-white text-xs font-extrabold transition shadow-md shadow-teal-600/25 inline-flex items-center gap-1.5 active:scale-95" title="Cetak seluruh lembar untuk semua ruangan sekaligus ke printer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+              Cetak Seluruhnya
             </button>
             <button type="button" onclick="window.appActions.saveDocx()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm shadow-blue-500/20 inline-flex items-center gap-1.5 active:scale-95" title="Simpan lembar pratinjau yang aktif ke dalam format Word .docx">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -4146,8 +4151,11 @@
         `;
       }
 
-      const roomList = getRoomParticipants(state.selectedRoom);
-      const roomGender = getRoomGenderDesignation(state.selectedRoom);
+      const isAllRooms = state.selectedRoom === 'ALL' || !state.selectedRoom;
+      const roomsToRender = isAllRooms ? ROOM_LIST : [state.selectedRoom];
+      const activeRoom = isAllRooms ? 'Ruang 01' : state.selectedRoom;
+      const roomList = getRoomParticipants(activeRoom);
+      const roomGender = getRoomGenderDesignation(activeRoom);
       const isMaleRoom = roomGender === 'L';
       const genderLabel = isMaleRoom ? 'Putra (Laki-Laki)' : 'Putri (Perempuan)';
       const countL = roomList.filter(p => p.gender === 'L').length;
@@ -4391,77 +4399,100 @@
         </div>
 
         <div id="print-mount">
-          <div class="f4-sheet">
-            ${renderKopSuratF4(`DENAH TEMPAT DUDUK PESERTA UJIAN — ${state.selectedRoom.toUpperCase()}`)}
+          ${roomsToRender.map(rName => {
+        const rList = getRoomParticipants(rName);
+        const rGender = getRoomGenderDesignation(rName);
+        const rNum = parseInt(String(rName).replace(/\D+/g, ''), 10) || 1;
+        const mCutoff = Number(state.maleRoomCount) || 7;
+        const isMR = rGender ? (rGender === 'L') : (rNum <= mCutoff);
+        const gLabel = isMR ? 'Putra (Laki-Laki)' : 'Putri (Perempuan)';
 
-            <table style="width: 100%; margin-bottom: 10px; font-size: 10pt; border: none;">
-              <tr>
-                <td style="border: none; width: 50%;"><strong>Ruangan Ujian:</strong> ${state.selectedRoom} (Ruang ${genderLabel})</td>
-                <td style="border: none; width: 50%; text-align: right;"><strong>Jumlah Peserta:</strong> ${roomList.length} ${isMaleRoom ? 'Siswa (Laki-Laki)' : 'Siswi (Perempuan)'}</td>
-              </tr>
-            </table>
+        const tSeats = rList.length;
+        const sCells = [];
+        for (let s = 1; s <= tSeats; s++) {
+          const occ = rList.find(p => Number(p.no_kursi) === s);
+          sCells.push({ seatNo: s, occupant: occ });
+        }
 
-            <div style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; font-size: 10pt; margin-bottom: 12px; background: #F8FAFC;">
-              MEJA PENGAWAS RUANG UJIAN / PAPAN TULIS DEPAN RUANGAN
-            </div>
+        const sRows = [];
+        for (let i = 0; i < sCells.length; i += cols) {
+          sRows.push(sCells.slice(i, i + cols));
+        }
 
-            <div data-docx="image" class="denah-meja-wrapper" style="width: 100%; margin: 0 auto 10px auto; background: #FFFFFF; box-sizing: border-box;">
-              <table class="denah-meja-table" style="width: 100%; border-collapse: separate; border-spacing: 8px 10px; table-layout: fixed; margin: 0 auto; border: none; box-sizing: border-box;">
-                <tbody>
-                  ${seatRows.map((row, rIdx) => `
-                    ${rIdx > 0 ? `<tr style="height: 8px;"><td colspan="${cols}" style="height: 8px; padding: 0; border: none; line-height: 0; font-size: 0;">&nbsp;</td></tr>` : ''}
-                    <tr>
-                      ${row.map(cell => {
-                        const p = cell.occupant;
-                        if (!p) {
-                          return `
-                            <td style="width: ${(100 / cols).toFixed(2)}%; vertical-align: top; padding: 0; border: none;">
-                              <div style="border: 1.5px dashed #94A3B8; border-radius: 4px; padding: 4px 6px; height: 82px; min-height: 82px; max-height: 82px; text-align: center; color: #64748B; background: #FAFAFA; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden;">
-                                <div style="font-weight: 800; font-size: 8pt; color: #64748B; line-height: 1.2;">KURSI #${cell.seatNo}</div>
-                                <div style="margin-top: 3px; font-style: italic; font-size: 6.8pt; color: #94A3B8; line-height: 1.2;">(Kosong)</div>
-                              </div>
-                            </td>
-                          `;
-                        }
-                        const diniClean = (p.kelas_diniyyah || '-').replace(/ulya/gi, 'Wustho');
-                        return `
-                          <td style="width: ${(100 / cols).toFixed(2)}%; vertical-align: top; padding: 0; border: none;">
-                            <div style="border: 1.5px solid #000000; border-radius: 4px; padding: 4px 6px; height: 82px; min-height: 82px; max-height: 82px; background: #FFFFFF; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;">
-                              <!-- Baris 1: No Kursi & No Peserta -->
-                              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #CBD5E1; padding-bottom: 2px; font-size: 7.5pt; line-height: 1.2; white-space: nowrap;">
-                                <span style="font-weight: 800; color: #000000; font-size: 8pt; flex-shrink: 0;">#${cell.seatNo}</span>
-                                <span style="font-weight: 700; font-family: monospace; font-size: 7.2pt; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 2px;" title="${p.no_peserta || '-'}">${p.no_peserta || '-'}</span>
-                              </div>
+        return `
+              <div class="f4-sheet" data-paper="F4" style="page-break-after: always; break-after: page;">
+                ${renderKopSuratF4(`DENAH TEMPAT DUDUK PESERTA UJIAN — ${rName.toUpperCase()}`)}
 
-                              <!-- Baris 2: Nama Peserta (Proporsional di Tengah) -->
-                              <div style="font-weight: 800; font-size: 8pt; line-height: 1.25; color: #000000; text-align: center; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0;" title="${p.nama}">
-                                ${p.nama}
-                              </div>
+                <table style="width: 100%; margin-bottom: 10px; font-size: 10pt; border: none;">
+                  <tr>
+                    <td style="border: none; width: 50%;"><strong>Ruangan Ujian:</strong> ${rName} (Ruang ${gLabel})</td>
+                    <td style="border: none; width: 50%; text-align: right;"><strong>Jumlah Peserta:</strong> ${rList.length} ${isMR ? 'Siswa (Laki-Laki)' : 'Siswi (Perempuan)'}</td>
+                  </tr>
+                </table>
 
-                              <!-- Baris 3: Kelas Sekolah & Diniyyah (Bawah Kiri & Kanan) -->
-                              <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #CBD5E1; padding-top: 2px; font-size: 6.8pt; line-height: 1.2; color: #1E293B; white-space: nowrap;">
-                                <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%;" title="${p.kelas_sekolah || '-'}">${p.kelas_sekolah || '-'}</span>
-                                <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%; text-align: right; color: #0F172A;" title="${diniClean}">${diniClean}</span>
-                              </div>
-                            </div>
-                          </td>
-                        `;
-                      }).join('')}
-                      ${row.length < cols ? Array(cols - row.length).fill(0).map(() => `
-                        <td style="width: ${(100 / cols).toFixed(2)}%; padding: 0; border: none;"></td>
-                      `).join('') : ''}
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
+                <div style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; font-size: 10pt; margin-bottom: 12px; background: #F8FAFC;">
+                  MEJA PENGAWAS RUANG UJIAN / PAPAN TULIS DEPAN RUANGAN
+                </div>
 
-            <!-- Rekapitulasi Jumlah Siswa Ruangan (Sebelum Kolom TTD) -->
-            ${renderRekapSiswaRuanganTable(state.selectedRoom)}
+                <div data-docx="image" class="denah-meja-wrapper" style="width: 100%; margin: 0 auto 10px auto; background: #FFFFFF; box-sizing: border-box;">
+                  <table class="denah-meja-table" style="width: 100%; border-collapse: separate; border-spacing: 8px 10px; table-layout: fixed; margin: 0 auto; border: none; box-sizing: border-box;">
+                    <tbody>
+                      ${sRows.map((row, rIdx) => `
+                        ${rIdx > 0 ? `<tr style="height: 8px;"><td colspan="${cols}" style="height: 8px; padding: 0; border: none; line-height: 0; font-size: 0;">&nbsp;</td></tr>` : ''}
+                        <tr>
+                          ${row.map(cell => {
+          const p = cell.occupant;
+          if (!p) {
+            return `
+                                <td style="width: ${(100 / cols).toFixed(2)}%; vertical-align: top; padding: 0; border: none;">
+                                  <div style="border: 1.5px dashed #94A3B8; border-radius: 4px; padding: 4px 6px; height: 82px; min-height: 82px; max-height: 82px; text-align: center; color: #64748B; background: #FAFAFA; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden;">
+                                    <div style="font-weight: 800; font-size: 8pt; color: #64748B; line-height: 1.2;">KURSI #${cell.seatNo}</div>
+                                    <div style="margin-top: 3px; font-style: italic; font-size: 6.8pt; color: #94A3B8; line-height: 1.2;">(Kosong)</div>
+                                  </div>
+                                </td>
+                              `;
+          }
+          const diniClean = (p.kelas_diniyyah || '-').replace(/ulya/gi, 'Wustho');
+          return `
+                              <td style="width: ${(100 / cols).toFixed(2)}%; vertical-align: top; padding: 0; border: none;">
+                                <div style="border: 1.5px solid #000000; border-radius: 4px; padding: 4px 6px; height: 82px; min-height: 82px; max-height: 82px; background: #FFFFFF; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;">
+                                  <!-- Baris 1: No Kursi & No Peserta -->
+                                  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #CBD5E1; padding-bottom: 2px; font-size: 7.5pt; line-height: 1.2; white-space: nowrap;">
+                                    <span style="font-weight: 800; color: #000000; font-size: 8pt; flex-shrink: 0;">#${cell.seatNo}</span>
+                                    <span style="font-weight: 700; font-family: monospace; font-size: 7.2pt; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 2px;" title="${p.no_peserta || '-'}">${p.no_peserta || '-'}</span>
+                                  </div>
 
-            <!-- TTD pada Denah Tempat Duduk: 1 Kolom TTD Ketua Panitia di Bagian Bawah Tengah -->
-            ${renderFooterTtdF4('KETUA_CENTER')}
-          </div>
+                                  <!-- Baris 2: Nama Peserta (Proporsional di Tengah) -->
+                                  <div style="font-weight: 800; font-size: 8pt; line-height: 1.25; color: #000000; text-align: center; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0;" title="${p.nama}">
+                                    ${p.nama}
+                                  </div>
+
+                                  <!-- Baris 3: Kelas Sekolah & Diniyyah (Bawah Kiri & Kanan) -->
+                                  <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #CBD5E1; padding-top: 2px; font-size: 6.8pt; line-height: 1.2; color: #1E293B; white-space: nowrap;">
+                                    <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%;" title="${p.kelas_sekolah || '-'}">${p.kelas_sekolah || '-'}</span>
+                                    <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%; text-align: right; color: #0F172A;" title="${diniClean}">${diniClean}</span>
+                                  </div>
+                                </div>
+                              </td>
+                            `;
+        }).join('')}
+                          ${row.length < cols ? Array(cols - row.length).fill(0).map(() => `
+                            <td style="width: ${(100 / cols).toFixed(2)}%; padding: 0; border: none;"></td>
+                          `).join('') : ''}
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Rekapitulasi Jumlah Siswa Ruangan (Sebelum Kolom TTD) -->
+                ${renderRekapSiswaRuanganTable(rName)}
+
+                <!-- TTD pada Denah Tempat Duduk: 1 Kolom TTD Ketua Panitia di Bagian Bawah Tengah -->
+                ${renderFooterTtdF4('KETUA_CENTER')}
+              </div>
+            `;
+      }).join('')}
         </div>
       `;
     }
@@ -4501,99 +4532,108 @@
               <span class="text-[10px] text-emerald-600 uppercase font-bold block">Total Cetak</span>
               <span class="text-xs font-extrabold text-emerald-800">${roomsToRender.length} Lembar F4</span>
             </div>
+            <button
+              type="button"
+              onclick="window.appActions.bulkPrint()"
+              class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 hover:opacity-95 text-white text-xs font-extrabold transition shadow-md shadow-teal-600/25 inline-flex items-center gap-1.5 active:scale-95"
+              title="Cetak seluruh 12 lembar sampul ruangan sekaligus ke printer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+              Cetak Seluruhnya (12 Ruang)
+            </button>
           </div>
         </div>
 
         <div id="print-mount">
           ${roomsToRender.map(roomName => {
-            const roomList = getRoomParticipants(roomName);
-            const roomGender = getRoomGenderDesignation(roomName);
-            const roomNum = parseInt(String(roomName).replace(/\D+/g, ''), 10) || 1;
-            const maleCutoff = Number(state.maleRoomCount) || 7;
-            const isMaleRoom = roomGender ? (roomGender === 'L') : (roomNum <= maleCutoff);
-            const targetGender = isMaleRoom ? 'L' : 'P';
-            const genderLabel = isMaleRoom ? 'Putra (Laki-Laki)' : 'Putri (Perempuan)';
+        const roomList = getRoomParticipants(roomName);
+        const roomGender = getRoomGenderDesignation(roomName);
+        const roomNum = parseInt(String(roomName).replace(/\D+/g, ''), 10) || 1;
+        const maleCutoff = Number(state.maleRoomCount) || 7;
+        const isMaleRoom = roomGender ? (roomGender === 'L') : (roomNum <= maleCutoff);
+        const targetGender = isMaleRoom ? 'L' : 'P';
+        const genderLabel = isMaleRoom ? 'Putra (Laki-Laki)' : 'Putri (Perempuan)';
 
-            // Kelas standar sekolah & diniyyah sesuai gender
-            const stdMaleSchool = ['7A MTS', '8A MTS', '9A MTS', '9B MTS', '10A MA', '11 MA', '12A MA'];
-            const stdMaleDini = ['1A ULA', '1B ULA', '2A ULA', '3A ULA', '1A WUSTHO', '2A WUSTHO', '3 WUSTHO'];
+        // Kelas standar sekolah & diniyyah sesuai gender
+        const stdMaleSchool = ['7A MTS', '8A MTS', '9A MTS', '9B MTS', '10A MA', '11 MA', '12A MA'];
+        const stdMaleDini = ['1A ULA', '1B ULA', '2A ULA', '3A ULA', '1A WUSTHO', '2A WUSTHO', '3 WUSTHO'];
 
-            const stdFemaleSchool = ['7B MTS', '8B MTS', '9B MTS', '9C MTS', '10B MA', '11 MA', '12B MA'];
-            const stdFemaleDini = ['1B ULA', '2B ULA', '3B ULA', '1B WUSTHO', '2B WUSTHO', '3 WUSTHO'];
+        const stdFemaleSchool = ['7B MTS', '8B MTS', '9B MTS', '9C MTS', '10B MA', '11 MA', '12B MA'];
+        const stdFemaleDini = ['1B ULA', '2B ULA', '3B ULA', '1B WUSTHO', '2B WUSTHO', '3 WUSTHO'];
 
-            // Kumpulkan himpunan kelas yang relevan untuk gender ruangan ini
-            const genderSchoolSet = new Set(isMaleRoom ? stdMaleSchool : stdFemaleSchool);
-            const genderDiniSet = new Set(isMaleRoom ? stdMaleDini : stdFemaleDini);
+        // Kumpulkan himpunan kelas yang relevan untuk gender ruangan ini
+        const genderSchoolSet = new Set(isMaleRoom ? stdMaleSchool : stdFemaleSchool);
+        const genderDiniSet = new Set(isMaleRoom ? stdMaleDini : stdFemaleDini);
 
-            (state.participants || []).forEach(p => {
-              if (p.gender === targetGender || (!p.gender && isMaleRoom)) {
-                if (p.kelas_sekolah && p.kelas_sekolah.trim()) {
-                  genderSchoolSet.add(p.kelas_sekolah.toUpperCase().trim());
-                }
-                if (p.kelas_diniyyah && p.kelas_diniyyah.trim()) {
-                  genderDiniSet.add(p.kelas_diniyyah.toUpperCase().trim().replace(/ULYA/gi, 'WUSTHO'));
-                }
-              }
-            });
-
-            const stdSchoolOrder = isMaleRoom
-              ? ['7A MTS', '8A MTS', '9A MTS', '9B MTS', '10A MA', '11 MA', '12A MA', '12 MA']
-              : ['7B MTS', '7C MTS', '8B MTS', '9B MTS', '9C MTS', '10B MA', '11 MA', '12B MA', '12 MA'];
-
-            const stdDiniOrder = isMaleRoom
-              ? ['1A ULA', '1B ULA', '2A ULA', '2B ULA', '3A ULA', '3B ULA', '1A WUSTHO', '1B WUSTHO', '2A WUSTHO', '2B WUSTHO', '3 WUSTHO', '3A WUSTHO']
-              : ['1B ULA', '2B ULA', '3B ULA', '1B WUSTHO', '2B WUSTHO', '3 WUSTHO', '3B WUSTHO'];
-
-            const activeSchoolClasses = Array.from(genderSchoolSet).sort((a, b) => {
-              const idxA = stdSchoolOrder.indexOf(a);
-              const idxB = stdSchoolOrder.indexOf(b);
-              if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-              if (idxA !== -1) return -1;
-              if (idxB !== -1) return 1;
-              return a.localeCompare(b);
-            });
-
-            const activeDiniClasses = Array.from(genderDiniSet).sort((a, b) => {
-              const idxA = stdDiniOrder.indexOf(a);
-              const idxB = stdDiniOrder.indexOf(b);
-              if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-              if (idxA !== -1) return -1;
-              if (idxB !== -1) return 1;
-              return a.localeCompare(b);
-            });
-
-            const schoolCounts = {};
-            roomList.forEach(p => {
-              const cls = (p.kelas_sekolah || '').toUpperCase().trim();
-              if (cls) schoolCounts[cls] = (schoolCounts[cls] || 0) + 1;
-            });
-            const schoolDisplayList = activeSchoolClasses.map(cls => ({
-              name: cls,
-              count: schoolCounts[cls] || 0
-            }));
-
-            const diniCounts = {};
-            roomList.forEach(p => {
-              const cls = (p.kelas_diniyyah || '').toUpperCase().trim().replace(/ULYA/gi, 'WUSTHO');
-              if (cls) diniCounts[cls] = (diniCounts[cls] || 0) + 1;
-            });
-            const diniDisplayList = activeDiniClasses.map(cls => ({
-              name: cls,
-              count: diniCounts[cls] || 0
-            }));
-
-            // Filter peserta sesuai gender ruangan agar data 100% konsisten
-            const validStudents = (roomList || []).filter(p => p.gender === targetGender || (!p.gender && isMaleRoom));
-            const rowCount = Math.max(10, Math.ceil(validStudents.length / 2));
-            const tableRows = [];
-            for (let i = 0; i < rowCount; i++) {
-              tableRows.push({
-                left: validStudents[i] || null,
-                right: validStudents[i + rowCount] || null
-              });
+        (state.participants || []).forEach(p => {
+          if (p.gender === targetGender || (!p.gender && isMaleRoom)) {
+            if (p.kelas_sekolah && p.kelas_sekolah.trim()) {
+              genderSchoolSet.add(p.kelas_sekolah.toUpperCase().trim());
             }
+            if (p.kelas_diniyyah && p.kelas_diniyyah.trim()) {
+              genderDiniSet.add(p.kelas_diniyyah.toUpperCase().trim().replace(/ULYA/gi, 'WUSTHO'));
+            }
+          }
+        });
 
-            return `
+        const stdSchoolOrder = isMaleRoom
+          ? ['7A MTS', '8A MTS', '9A MTS', '9B MTS', '10A MA', '11 MA', '12A MA', '12 MA']
+          : ['7B MTS', '7C MTS', '8B MTS', '9B MTS', '9C MTS', '10B MA', '11 MA', '12B MA', '12 MA'];
+
+        const stdDiniOrder = isMaleRoom
+          ? ['1A ULA', '1B ULA', '2A ULA', '2B ULA', '3A ULA', '3B ULA', '1A WUSTHO', '1B WUSTHO', '2A WUSTHO', '2B WUSTHO', '3 WUSTHO', '3A WUSTHO']
+          : ['1B ULA', '2B ULA', '3B ULA', '1B WUSTHO', '2B WUSTHO', '3 WUSTHO', '3B WUSTHO'];
+
+        const activeSchoolClasses = Array.from(genderSchoolSet).sort((a, b) => {
+          const idxA = stdSchoolOrder.indexOf(a);
+          const idxB = stdSchoolOrder.indexOf(b);
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return a.localeCompare(b);
+        });
+
+        const activeDiniClasses = Array.from(genderDiniSet).sort((a, b) => {
+          const idxA = stdDiniOrder.indexOf(a);
+          const idxB = stdDiniOrder.indexOf(b);
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return a.localeCompare(b);
+        });
+
+        const schoolCounts = {};
+        roomList.forEach(p => {
+          const cls = (p.kelas_sekolah || '').toUpperCase().trim();
+          if (cls) schoolCounts[cls] = (schoolCounts[cls] || 0) + 1;
+        });
+        const schoolDisplayList = activeSchoolClasses.map(cls => ({
+          name: cls,
+          count: schoolCounts[cls] || 0
+        }));
+
+        const diniCounts = {};
+        roomList.forEach(p => {
+          const cls = (p.kelas_diniyyah || '').toUpperCase().trim().replace(/ULYA/gi, 'WUSTHO');
+          if (cls) diniCounts[cls] = (diniCounts[cls] || 0) + 1;
+        });
+        const diniDisplayList = activeDiniClasses.map(cls => ({
+          name: cls,
+          count: diniCounts[cls] || 0
+        }));
+
+        // Filter peserta sesuai gender ruangan agar data 100% konsisten
+        const validStudents = (roomList || []).filter(p => p.gender === targetGender || (!p.gender && isMaleRoom));
+        const rowCount = Math.max(10, Math.ceil(validStudents.length / 2));
+        const tableRows = [];
+        for (let i = 0; i < rowCount; i++) {
+          tableRows.push({
+            left: validStudents[i] || null,
+            right: validStudents[i + rowCount] || null
+          });
+        }
+
+        return `
               <div class="f4-sheet" data-paper="F4" style="width: 215mm; min-height: 330mm; max-height: 330mm; padding: 8mm 10mm; margin: 0 auto 24px auto; background: #ffffff; box-sizing: border-box; page-break-after: always; break-after: page; position: relative;">
                 <div style="border: 2px solid #000000; padding: 7mm 8mm; width: 100%; height: 100%; min-height: 312mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
                   <!-- Bagian 1: Kop Surat Resmi -->
@@ -4684,7 +4724,7 @@
                 </div>
               </div>
             `;
-          }).join('')}
+      }).join('')}
         </div>
       `;
     }
@@ -7730,7 +7770,10 @@
       }
     }
 
+    let isBulkPrinting = false;
+
     function fillPrintRoot() {
+      if (isBulkPrinting) return;
       const root = document.getElementById('print-root');
       const mount = document.getElementById('print-mount');
       if (!root) return;
@@ -7740,6 +7783,7 @@
 
     window.addEventListener('beforeprint', fillPrintRoot);
     window.addEventListener('afterprint', () => {
+      isBulkPrinting = false;
       const root = document.getElementById('print-root');
       if (root) root.innerHTML = '';
     });
@@ -7749,8 +7793,40 @@
         notify("Halaman ini tidak memiliki pratinjau dokumen untuk dicetak.", "error");
         return;
       }
+      isBulkPrinting = false;
       fillPrintRoot();
       window.print();
+    }
+
+    function bulkPrint() {
+      let sheets = [];
+      const mount = document.getElementById('print-mount');
+      const currentSheets = mount ? mount.querySelectorAll('.f4-sheet, .a4-sheet') : [];
+      if (currentSheets.length > 1) {
+        sheets = Array.from(currentSheets);
+      } else {
+        sheets = collectBulkSheets();
+      }
+
+      if (!sheets || sheets.length === 0) {
+        notify("Tidak ada lembar dokumen untuk dicetak.", "error");
+        return;
+      }
+
+      notify(`Menyiapkan cetak seluruh lembar (${sheets.length} halaman)... Mohon tunggu dialog cetak printer muncul.`);
+      const root = document.getElementById('print-root');
+      if (!root) return;
+      isBulkPrinting = true;
+      root.innerHTML = '';
+      sheets.forEach(sh => {
+        const clone = sh.cloneNode(true);
+        root.appendChild(clone);
+      });
+      updateDynamicPrintStyle();
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => { isBulkPrinting = false; }, 1500);
+      }, 100);
     }
 
     async function savePdfFromSheets(sheets, fileName) {
@@ -8990,6 +9066,7 @@
         notify("Berhasil mengunduh file Excel Ujian Susulan.");
       },
       printPreview: () => printPreview(),
+      bulkPrint: () => bulkPrint(),
       exportExcel: () => {
         if (typeof XLSX === 'undefined') {
           notify("Pustaka Excel belum siap, periksa koneksi internet lalu coba lagi.", "error");
