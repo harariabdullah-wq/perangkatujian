@@ -1115,6 +1115,7 @@
       proctors: structuredClone(DEFAULT_IMAGE_PROCTORS),
       proctorMatrix: structuredClone(DEFAULT_PROCTOR_MATRIX),
       proctorActiveTab: 'matriks',
+      proctorRekapDay: 'Senin',
       proctorHadirDay: 'Senin',
       proctorHadirSesi: 1,
       proctorHadirMode: 'per_sesi',
@@ -2028,12 +2029,14 @@
       `;
     }
 
-    function getDigitalSignatureMarkup(roleKey, customImgData, signerName, heightPx = 52) {
+    function getDigitalSignatureMarkup(roleKey, customImgData, signerName, heightPx = 75) {
       if (state.settings.gunakanTtdDigital === false) {
         return `<div style="height: ${heightPx}px;"></div>`;
       }
       if (customImgData && customImgData.startsWith('data:image')) {
-        return `<div style="height: ${heightPx}px; display: flex; align-items: center; justify-content: center; margin: 2px 0;"><img src="${customImgData}" alt="TTD" style="max-height: ${heightPx}px; max-width: 150px; object-fit: contain;" /></div>`;
+        const imgMaxH = Math.round(heightPx * 1.35);
+        const imgMaxW = Math.round(Math.max(220, heightPx * 2.8));
+        return `<div style="min-height: ${heightPx}px; display: flex; align-items: center; justify-content: center; margin: 3px 0; padding: 2px 0;"><img src="${customImgData}" alt="TTD" style="max-height: ${imgMaxH}px; max-width: ${imgMaxW}px; width: auto; height: auto; object-fit: contain; filter: contrast(1.08); display: block;" /></div>`;
       }
       const svgPaths = {
         KEPALA_MA: `<path d="M12,38 C28,10 42,46 58,18 C70,4 82,40 98,22 C114,8 128,34 156,16 M24,42 C68,34 118,30 168,28" stroke="#1E3A8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -2043,8 +2046,8 @@
       };
       const pathMarkup = svgPaths[roleKey] || svgPaths.KETUA_PANITIA;
       return `
-        <div style="height: ${heightPx}px; display: flex; align-items: center; justify-content: center; position: relative; margin: 2px 0;">
-          <svg viewBox="0 0 185 50" style="height: ${heightPx}px; width: auto; overflow: visible;">
+        <div style="min-height: ${heightPx}px; display: flex; align-items: center; justify-content: center; position: relative; margin: 3px 0;">
+          <svg viewBox="0 0 185 50" style="height: ${Math.round(heightPx * 1.15)}px; width: auto; max-width: 220px; overflow: visible;">
             ${pathMarkup}
           </svg>
         </div>
@@ -2078,24 +2081,24 @@
 
     function renderFooterTtdF4(mode = 'KETUA_ONLY', leftContent = '') {
       const s = state.settings;
-      const ttdKetua = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 50);
+      const ttdKetua = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 75);
 
       if (mode === 'KETUA_CENTER' || mode === 'KETUA_TENGAH') {
-        const ttdKetuaCenter = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 48);
+        const ttdKetuaCenter = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 72);
         return `
           <table style="width: 100%; margin-top: 10px; border: none; font-size: 10pt; page-break-inside: avoid;">
             <tr>
-              <td style="width: 30%; border: none;"></td>
-              <td style="width: 40%; text-align: center; border: none; vertical-align: top;">
+              <td style="width: 25%; border: none;"></td>
+              <td style="width: 50%; text-align: center; border: none; vertical-align: top;">
                 ${s.kotaTanggal || ''}<br/>
                 Ketua Panitia Ujian,
-                <div style="min-height: 48px; display: flex; align-items: center; justify-content: center; margin: 3px 0;">
+                <div style="min-height: 72px; display: flex; align-items: center; justify-content: center; margin: 3px 0;">
                   ${ttdKetuaCenter}
                 </div>
                 <strong style="text-decoration: underline; font-size: 10.5pt;">${s.ketuaPanitia || ''}</strong><br/>
                 <span style="font-size: 9pt;">NIP/NIY. ${s.nipKetua || '-'}</span>
               </td>
-              <td style="width: 30%; border: none;"></td>
+              <td style="width: 25%; border: none;"></td>
             </tr>
           </table>
         `;
@@ -2105,10 +2108,10 @@
         return `
           <table style="width: 100%; margin-top: 14px; border: none; font-size: 10.5pt; page-break-inside: avoid;">
             <tr>
-              <td style="width: 58%; border: none; vertical-align: top; text-align: left;">
+              <td style="width: 55%; border: none; vertical-align: top; text-align: left;">
                 ${leftContent || ''}
               </td>
-              <td style="width: 42%; text-align: center; border: none; vertical-align: top;">
+              <td style="width: 45%; text-align: center; border: none; vertical-align: top;">
                 ${s.kotaTanggal}<br/>
                 Ketua Panitia Ujian,
                 ${ttdKetua}
@@ -2141,7 +2144,7 @@
           headCustomImg = s.ttdKepalaDiniyyah;
         }
 
-        const ttdHead = getDigitalSignatureMarkup(headRoleKey, headCustomImg, headName, 50);
+        const ttdHead = getDigitalSignatureMarkup(headRoleKey, headCustomImg, headName, 75);
 
         return `
           <table style="width: 100%; margin-top: 16px; border: none; font-size: 10.5pt; page-break-inside: avoid;">
@@ -2165,9 +2168,9 @@
         `;
       }
 
-      const ttdMA = getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 44);
-      const ttdMTS = getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 44);
-      const ttdDin = getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 44);
+      const ttdMA = getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 65);
+      const ttdMTS = getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 65);
+      const ttdDin = getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 65);
 
       return `
         <table style="width: 100%; margin-top: 14px; border: none; font-size: 9.5pt; page-break-inside: avoid;">
@@ -2192,7 +2195,7 @@
             </td>
             <td style="width: 25%; text-align: center; border: none; vertical-align: top;">
               ${s.kotaTanggal}<br/>Ketua Panitia
-              ${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 44)}
+              ${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 65)}
               <strong style="text-decoration: underline;">${s.ketuaPanitia}</strong><br/>
               NIP/NIY. ${s.nipKetua}
             </td>
@@ -2837,8 +2840,8 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="height: 36px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 36)}
+              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
+                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
               </div>
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
@@ -2915,8 +2918,8 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="height: 36px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 36)}
+              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
+                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
               </div>
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
@@ -2990,8 +2993,8 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="height: 36px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 36)}
+              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
+                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
               </div>
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
@@ -5207,11 +5210,18 @@
     // MODUL 6: JADWAL PENGAWAS BERDASARKAN MATA PELAJARAN DI RUANGAN (1 RUANGAN = 1 ORANG PENGAWAS)
     function renderModuleJadwalPengawas() {
       const activeTab = state.proctorActiveTab || 'matriks';
+      const rekapDay = state.proctorRekapDay || 'Senin';
 
       // Pastikan proctorMatrix terisi
       if (!state.proctorMatrix || Object.keys(state.proctorMatrix).length === 0) {
         state.proctorMatrix = structuredClone(DEFAULT_PROCTOR_MATRIX);
       }
+
+      // Map kode pengawas ke objek proctor
+      const proctorMap = {};
+      (state.proctors || []).forEach(p => {
+        if (p.kode) proctorMap[p.kode.toUpperCase().trim()] = p;
+      });
 
       const dayKeys = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       const dayConfigs = dayKeys.map((dayKey, idx) => {
@@ -5228,10 +5238,10 @@
       });
 
       const sessionTimes = [
-        { sesi: 1, jamKe: 'I' },
-        { sesi: 2, jamKe: 'II' },
-        { sesi: 3, jamKe: 'III' },
-        { sesi: 4, jamKe: 'IV' }
+        { sesi: 1, jamKe: 'I', label: 'Sesi 1 (MTs / MA)' },
+        { sesi: 2, jamKe: 'II', label: 'Sesi 2 (MTs / MA)' },
+        { sesi: 3, jamKe: 'III', label: 'Sesi 3 (MTs / MA)' },
+        { sesi: 4, jamKe: 'IV', label: 'Sesi 4 (Diniyyah)' }
       ];
 
       const getProctorSlotWaktu = (dayKey, sesiNum) => {
@@ -5246,7 +5256,7 @@
         return '14:00 - 14:45';
       };
 
-      // Daftar proctors kanan (minimal 37 baris seperti di gambar)
+      // Daftar proctors kanan (minimal 37 baris seperti di format gambar resmi)
       const maxProctors = Math.max(37, state.proctors.length);
       const rightTableRows = [];
       for (let i = 0; i < maxProctors; i++) {
@@ -5258,15 +5268,19 @@
         });
       }
 
+      const daysForRekap = (rekapDay === 'ALL')
+        ? dayConfigs
+        : [dayConfigs.find(d => d.dayKey === rekapDay) || dayConfigs[0]];
+
       return `
         <div class="no-print space-y-4 mb-6">
           <!-- Control Banner -->
           <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 uppercase tracking-wide">
-                  <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
-                  Format Resmi Jadwal Pengawas (F4 Landscape)
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-bold ${activeTab === 'nama' ? 'bg-indigo-100 text-indigo-800' : activeTab === 'rekap_harian' ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-800'} uppercase tracking-wide">
+                  <span class="w-2 h-2 rounded-full ${activeTab === 'nama' ? 'bg-indigo-600' : activeTab === 'rekap_harian' ? 'bg-amber-600' : 'bg-purple-600'} animate-pulse"></span>
+                  ${activeTab === 'nama' ? 'Format Resmi Nama Pengawas (F4 Landscape)' : activeTab === 'rekap_harian' ? 'Rekapan Pengawas Per Hari (Share Guru & Cetak F4)' : 'Format Resmi Matriks Kode Pengawas (F4 Landscape)'}
                 </div>
                 ${state.lastSavedProctorSchedule ? `
                   <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -5280,20 +5294,23 @@
                   </span>
                 `}
               </div>
-              <h2 class="text-xl font-extrabold text-slate-800 uppercase tracking-wide mt-1.5">JADWAL PENGAWAS RUANG UJIAN (12 RUANG)</h2>
-              <p class="text-xs text-slate-500">Matriks penugasan pengawas untuk seluruh 12 ruangan beserta daftar kode pengawas MTs, MA &amp; Diniyyah.</p>
+              <h2 class="text-xl font-extrabold text-slate-800 uppercase tracking-wide mt-1.5">
+                ${activeTab === 'nama' ? 'JADWAL PENGAWAS RUANG UJIAN (FORMAT NAMA PENGAWAS)' : activeTab === 'rekap_harian' ? 'REKAPAN PENGAWAS RUANG UJIAN PER HARI' : 'JADWAL PENGAWAS RUANG UJIAN (12 RUANG)'}
+              </h2>
+              <p class="text-xs text-slate-500">
+                ${activeTab === 'nama'
+                  ? 'Layout jadwal pengawas 12 ruangan lengkap dengan nama pengawas (menggantikan kode), format standar F4 Landscape siap cetak dan ekspor Word/PDF.'
+                  : activeTab === 'rekap_harian'
+                  ? 'Rekapitulasi jadwal pengawas per hari untuk dibagikan kepada dewan guru via WhatsApp atau dicetak sebagai arsip panitia.'
+                  : 'Sesuai format resmi At-Tahiyyah: Tabel jadwal pengawas 12 ruangan (kiri) berdampingan dengan daftar nama & kode pengawas (kanan).'
+                }
+              </p>
             </div>
+
+            <!-- Action Toolbar (Cetak, Word, PDF, Excel) -->
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="window.appActions.autoGenerateProctorSchedule()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Generate otomatis seluruh jadwal 12 ruangan tanpa bentrok">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Generate Jadwal Otomatis
-              </button>
-              <button onclick="window.appActions.saveProctorSchedule()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm shadow-emerald-600/25 inline-flex items-center gap-1.5 active:scale-95" title="Simpan jadwal pengawas yang telah di-generate">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                Simpan Jadwal Pengawas
-              </button>
               <!-- 🖨️ Cetak -->
-              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak jadwal pengawas">
+              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak jadwal aktif">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                 Cetak
               </button>
@@ -5330,104 +5347,167 @@
 
           <!-- Tab Selector Bar -->
           <div class="bg-white rounded-xl p-2.5 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-            <div class="inline-flex bg-slate-100 p-1 rounded-xl">
-              <button onclick="window.appActions.setProctorActiveTab('matriks')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'matriks' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
-                Pratinjau Matriks (Sesuai Gambar)
+            <div class="inline-flex flex-wrap bg-slate-100 p-1 rounded-xl gap-1">
+              <button onclick="window.appActions.setProctorActiveTab('matriks')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'matriks' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+                Matriks Kode (Resmi)
               </button>
-              <button onclick="window.appActions.setProctorActiveTab('kelola')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'kelola' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+              <button onclick="window.appActions.setProctorActiveTab('nama')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'nama' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+                Jadwal Format Nama Guru (F4 Landscape)
+              </button>
+              <button onclick="window.appActions.setProctorActiveTab('rekap_harian')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'rekap_harian' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+                Rekapan Per Hari (Share Guru)
+              </button>
+              <button onclick="window.appActions.setProctorActiveTab('kelola')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'kelola' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
                 Kelola Data Pengawas (${state.proctors.length})
               </button>
-              <button onclick="window.appActions.setProctorActiveTab('edit')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'edit' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+              <button onclick="window.appActions.setProctorActiveTab('edit')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${activeTab === 'edit' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
                 Edit Penugasan Matriks
               </button>
             </div>
             <div class="flex items-center gap-2">
-              <button onclick="window.appActions.autoGenerateProctorSchedule()" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5" title="Generate otomatis seluruh 12 ruangan tanpa bentrok">
+              <button onclick="window.appActions.autoGenerateProctorSchedule()" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Generate jadwal pengawas 12 ruangan otomatis">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                Generate Jadwal Otomatis
+                Generate Otomatis
               </button>
-              <button onclick="window.appActions.saveProctorSchedule()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Simpan jadwal pengawas hasil generate">
+              <button onclick="window.appActions.saveProctorSchedule()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Simpan jadwal pengawas permanen">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                Simpan Jadwal
-              </button>
-              <button onclick="window.appActions.resetProctorToDefaultImage()" class="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold transition">
-                Reset ke Jadwal Default Gambar
-              </button>
-              <button onclick="window.appActions.setMenu('hadir_pengawas')" class="px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-300 text-teal-800 hover:bg-teal-100 text-xs font-bold transition inline-flex items-center gap-1.5" title="Buka lembar cetak daftar hadir presensi pengawas">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                Daftar Hadir Pengawas &rarr;
+                Simpan Jadwal Pengawas
               </button>
             </div>
           </div>
 
-          ${activeTab === 'kelola' ? `
-            <!-- TAB 2: KELOLA DATA PENGAWAS (DIPINDAHKAN DARI DATA MASTER) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <!-- Form Tambah Pengawas Manual -->
-              <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-4">
-                <form onsubmit="window.appActions.addProctor(event)" class="space-y-3">
-                  <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-600">Tambah Pengawas Baru</h3>
-                    <span class="text-[11px] text-slate-400">Total: ${state.proctors.length} Guru</span>
+          ${activeTab === 'rekap_harian' ? `
+            <!-- REKAPAN HARIAN SUB-BAR -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <div>
+                  <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 uppercase tracking-wide">
+                    <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+                    Rekapan Pengawas Per Hari (Siap Cetak &amp; Share Guru)
                   </div>
-                  <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Kode Pengawas</label>
-                    <input name="kode" required placeholder="Contoh: A, B, Z, AA, AB" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs uppercase font-bold focus:border-indigo-400 focus:outline-none" />
-                  </div>
-                  <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Nama Lengkap &amp; Gelar</label>
-                    <input name="nama" required placeholder="Nama Lengkap Pengawas" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:border-indigo-400 focus:outline-none" />
-                  </div>
-                  <div>
-                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Jabatan / Keterangan Unit</label>
-                    <input name="jabatan" placeholder="Contoh: Guru MTs / MA / Diniyyah" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:border-indigo-400 focus:outline-none" />
-                  </div>
-                  <button type="submit" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
-                    + Tambah Pengawas Manual
+                  <h3 class="text-sm font-extrabold text-slate-800 mt-1">Pilih Hari untuk Melihat Jadwal &amp; Bagikan ke WhatsApp Guru</h3>
+                  <p class="text-xs text-slate-500">Klik tombol "Salin Pesan WhatsApp" untuk membagikan rekap jadwal harian langsung ke grup WhatsApp bapak/ibu guru.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button onclick="window.appActions.copyProctorDayScheduleWA(state.proctorRekapDay || 'Senin')" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Salin format teks siap kirim ke WhatsApp">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    Salin Pesan WhatsApp
                   </button>
-                </form>
-
-                <div class="border-t border-slate-100 pt-3 space-y-2">
-                  <div class="flex items-center justify-between">
-                    <button type="button" onclick="window.appActions.downloadProctorTemplate()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-[11px] font-bold text-slate-700">
-                      Unduh Template Excel (.xlsx)
-                    </button>
-                    <label class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold cursor-pointer transition">
-                      Impor .xlsx Pengawas
-                      <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="window.appActions.uploadProctorExcel(event)" />
-                    </label>
-                  </div>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3">
+                <span class="text-xs font-bold text-slate-600 mr-1">Filter Hari:</span>
+                ${dayConfigs.map(d => `
+                  <button
+                    onclick="window.appActions.setProctorRekapDay('${d.dayKey}')"
+                    class="px-3 py-1 rounded-lg text-xs font-bold transition ${(state.proctorRekapDay || 'Senin') === d.dayKey ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}"
+                  >
+                    ${d.label}
+                  </button>
+                `).join('')}
+                <button
+                  onclick="window.appActions.setProctorRekapDay('ALL')"
+                  class="px-3 py-1 rounded-lg text-xs font-bold transition ${(state.proctorRekapDay || 'Senin') === 'ALL' ? 'bg-purple-600 text-white shadow-sm' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}"
+                >
+                  Semua Hari (6 Lembar)
+                </button>
+              </div>
+            </div>
+          ` : activeTab === 'kelola' ? `
+            <!-- TAB 2: KELOLA DATA PENGAWAS -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+              <div class="flex flex-wrap items-center justify-between mb-4 gap-2">
+                <div>
+                  <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Daftar Pengawas Ujian (${state.proctors.length} Orang)</span>
+                  <p class="text-[11px] text-slate-400">Kode otomatis berurutan dari A s.d ZZ. Kode ini yang akan tampil pada matriks 12 ruangan.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button onclick="window.appActions.resetProctorToDefaultImage()" class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold transition inline-flex items-center gap-1" title="Kembalikan nama & kode pengawas ke data default sesuai gambar resmi">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Reset Sesuai Gambar
+                  </button>
                 </div>
               </div>
 
-              <!-- Tabel Daftar Pengawas Terdaftar -->
-              <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between">
+              <!-- Form Tambah Pengawas -->
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 bg-slate-50 rounded-xl mb-4 border border-slate-200">
+                <div class="md:col-span-2">
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Nama Lengkap Pengawas (dengan Gelar)</label>
+                  <input
+                    id="new-proctor-nama"
+                    type="text"
+                    placeholder="Contoh: Ust. Ahmad Fauzi, M.Pd."
+                    class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                    onkeydown="if(event.key === 'Enter') document.getElementById('btn-add-proctor').click()"
+                  />
+                </div>
                 <div>
-                  <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Daftar Guru &amp; Kode Pengawas Ujian (${state.proctors.length})</h3>
-                    ${state.proctors.length > 0 ? `
-                      <button type="button" onclick="window.appActions.toggleClearAllProctors(true)" class="px-2.5 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold transition">
-                        Hapus Semua Pengawas
-                      </button>
-                    ` : ''}
-                  </div>
-                  <div class="max-h-[440px] overflow-y-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                      <thead class="bg-slate-50 sticky top-0 border-b border-slate-200">
-                        <tr>
-                          <th class="py-2 px-3 text-center w-12 font-bold">No</th>
-                          <th class="py-2 px-3 text-center w-20 font-bold">Kode</th>
-                          <th class="py-2 px-3 font-bold">Nama Pengawas</th>
-                          <th class="py-2 px-3 font-bold">Jabatan / Unit</th>
-                          <th class="py-2 px-3 text-center w-14 font-bold">Aksi</th>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Jabatan / Kategori Guru</label>
+                  <select id="new-proctor-jabatan" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:border-indigo-500 focus:outline-none">
+                    <option value="Guru MTs/MA">Guru MTs/MA (Sesi 1-3)</option>
+                    <option value="Guru Diniyyah">Guru Diniyyah (Sesi 4)</option>
+                  </select>
+                </div>
+                <div class="flex items-end">
+                  <button
+                    id="btn-add-proctor"
+                    onclick="window.appActions.addProctor()"
+                    class="w-full px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center justify-center gap-1"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah Pengawas
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tabel Daftar Pengawas (Dua Kolom jika panjang) -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Kolom 1: No 1 - 20 -->
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                  <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-700 font-bold">
+                      <tr>
+                        <th class="py-1.5 px-2 text-center w-10">No</th>
+                        <th class="py-1.5 px-2 text-center w-14">Kode</th>
+                        <th class="py-1.5 px-3">Nama Pengawas</th>
+                        <th class="py-1.5 px-3">Jabatan</th>
+                        <th class="py-1.5 px-2 text-center w-10">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      ${state.proctors.slice(0, Math.ceil(state.proctors.length / 2)).map((pr, idx) => `
+                        <tr class="hover:bg-slate-50">
+                          <td class="py-1.5 px-2 text-center text-slate-500 font-bold">${idx + 1}</td>
+                          <td class="py-1.5 px-2 text-center font-mono font-extrabold text-indigo-700 bg-indigo-50/50">${pr.kode || '-'}</td>
+                          <td class="py-1.5 px-3 font-semibold text-slate-800">${pr.nama}</td>
+                          <td class="py-1.5 px-3 text-slate-500 text-[11px]">${pr.jabatan || 'Guru MTs/MA'}</td>
+                          <td class="py-1.5 px-2 text-center">
+                            <button onclick="window.appActions.deleteProctor('${pr.id}')" title="Hapus Pengawas" class="text-rose-500 hover:text-rose-700 font-bold text-base leading-none">&times;</button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody class="divide-y divide-slate-100">
-                        ${state.proctors.length === 0 ? `
-                          <tr><td colspan="5" class="py-8 text-center text-slate-400 italic">Belum ada pengawas terdaftar.</td></tr>
-                        ` : state.proctors.map((pr, idx) => `
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Kolom 2: No 21 dst -->
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                  <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-100 text-slate-700 font-bold">
+                      <tr>
+                        <th class="py-1.5 px-2 text-center w-10">No</th>
+                        <th class="py-1.5 px-2 text-center w-14">Kode</th>
+                        <th class="py-1.5 px-3">Nama Pengawas</th>
+                        <th class="py-1.5 px-3">Jabatan</th>
+                        <th class="py-1.5 px-2 text-center w-10">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      ${state.proctors.slice(Math.ceil(state.proctors.length / 2)).map((pr, idx) => {
+                        const actualIdx = Math.ceil(state.proctors.length / 2) + idx;
+                        return `
                           <tr class="hover:bg-slate-50">
-                            <td class="py-1.5 px-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                            <td class="py-1.5 px-2 text-center text-slate-500 font-bold">${actualIdx + 1}</td>
                             <td class="py-1.5 px-3 text-center font-mono font-extrabold text-indigo-700 bg-indigo-50/50">${pr.kode || '-'}</td>
                             <td class="py-1.5 px-3 font-semibold text-slate-800">${pr.nama}</td>
                             <td class="py-1.5 px-3 text-slate-500 text-[11px]">${pr.jabatan || 'Guru Madrasah'}</td>
@@ -5435,10 +5515,10 @@
                               <button onclick="window.appActions.deleteProctor('${pr.id}')" title="Hapus Pengawas" class="text-rose-500 hover:text-rose-700 font-bold text-base leading-none">&times;</button>
                             </td>
                           </tr>
-                        `).join('')}
-                      </tbody>
-                    </table>
-                  </div>
+                        `;
+                      }).join('')}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -5448,9 +5528,13 @@
               <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
                 <div>
                   <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Edit Kode Pengawas Per Hari, Sesi &amp; Ruang 1-12</span>
-                  <p class="text-[11px] text-slate-400">Ketik kode pengawas langsung pada kolom ruangan, atau gunakan tombol otomatis.</p>
+                  <p class="text-[11px] text-slate-400">Ketik kode pengawas langsung pada kolom ruangan, atau gunakan tombol reset / otomatis.</p>
                 </div>
                 <div class="flex items-center gap-2">
+                  <button onclick="window.appActions.resetProctorMatrixInputs()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5 active:scale-95" title="Hapus dan bersihkan semua input kode pengawas">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    Reset Input Pengawas
+                  </button>
                   <button onclick="window.appActions.autoGenerateProctorSchedule()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     Generate Jadwal Otomatis
@@ -5472,10 +5556,10 @@
                 </thead>
                 <tbody>
                   ${dayConfigs.map(d => {
-        return sessionTimes.map((st, sIdx) => {
-          const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-          const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
-          return `
+                    return sessionTimes.map((st, sIdx) => {
+                      const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+                      const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+                      return `
                         <tr class="${sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-indigo-50/30">
                           ${sIdx === 0 ? `<td rowspan="4" class="p-2 font-bold text-slate-800 border border-slate-200 align-middle">${d.dayKey}</td>` : ''}
                           <td class="p-1 font-bold text-indigo-700 border border-slate-200">${st.jamKe}</td>
@@ -5493,108 +5577,360 @@
                           `).join('')}
                         </tr>
                       `;
-        }).join('');
-      }).join('')}
+                    }).join('');
+                  }).join('')}
                 </tbody>
               </table>
             </div>
           ` : ''}
         </div>
 
-        <!-- PRATINJAU DOKUMEN CETAK RESMI (F4 LANDSCAPE PERSIS GAMBAR) -->
+        <!-- PRATINJAU DOKUMEN CETAK RESMI (SESUAI TAB AKTIF) -->
         <div id="print-mount" class="overflow-x-auto pb-4">
-          <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: #FFFFFF; box-sizing: border-box;">
-            
-            <!-- HEADER RESMI SESUAI GAMBAR CONTOH -->
-            <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 5px;">
-              <tr>
-                <td style="width: 69%; border: none; text-align: center; vertical-align: middle; padding: 0 10px 0 0;">
-                  <div style="font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
-                    ${state.settings.namaUjian ? (state.settings.namaUjian.startsWith('JADWAL') ? state.settings.namaUjian : 'JADWAL PENGAWAS ' + state.settings.namaUjian) : 'JADWAL PENGAWAS PENILAIAN AKHIR SEMESTER GENAP'}
-                  </div>
-                  <div style="font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
-                    ${state.settings.yayasan || 'PONDOK PESANTREN ATTAHIYYAH'}
-                  </div>
-                  <div style="font-size: 10.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
-                    TAHUN PELAJARAN ${state.settings.tahunAjaran || '2025/2026'}
-                  </div>
-                </td>
-                <td style="width: 31%; border: none; text-align: center; vertical-align: middle; padding: 0 0 0 10px;">
-                  <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.25;">
-                    NAMA &amp; KODE PENGAWAS
-                  </div>
-                  <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.25;">
-                    MTs, MA &amp; DINIYYAH
-                  </div>
-                </td>
-              </tr>
-            </table>
+          ${activeTab === 'nama' ? `
+            <!-- ================================================= -->
+            <!-- FORMAT 1: JADWAL PENGAWAS FORMAT NAMA PENGAWAS (F4 LANDSCAPE) -->
+            <!-- ================================================= -->
+            <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 7mm 8mm; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: #FFFFFF; box-sizing: border-box;">
+              
+              <!-- HEADER RESMI -->
+              <div style="text-align: center; margin-bottom: 6px; line-height: 1.25;">
+                <div style="font-size: 11.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                  ${state.settings.namaUjian ? (state.settings.namaUjian.startsWith('JADWAL') ? state.settings.namaUjian : 'JADWAL PENGAWAS RUANG ' + state.settings.namaUjian) : 'JADWAL PENGAWAS RUANG UJIAN PENILAIAN AKHIR SEMESTER GENAP'}
+                </div>
+                <div style="font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                  ${state.settings.yayasan || 'PONDOK PESANTREN ATTAHIYYAH'}
+                </div>
+                <div style="font-size: 10pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px;">
+                  TAHUN PELAJARAN ${state.settings.tahunAjaran || '2025/2026'} &bull; FORMAT RESMI NAMA PENGAWAS
+                </div>
+              </div>
 
-            <!-- DUA TABEL BERDAMPINGAN: KIRI (JADWAL PENGAWAS) & KANAN (NAMA & KODE PENGAWAS) -->
-            <table style="width: 100%; border-collapse: collapse; border: none;">
-              <tr>
-                <!-- TABEL KIRI: JADWAL PENGAWAS RUANG (1-12) -->
-                <td style="width: 69%; vertical-align: top; border: none; padding: 0 6px 0 0;">
-                  <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 7.5pt; text-align: center; line-height: 1.2;">
+              <!-- TABEL 12 RUANGAN BERISI NAMA PENGAWAS -->
+              <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 6.8pt; text-align: center; line-height: 1.15;">
+                <thead>
+                  <tr style="background: #f8fafc;">
+                    <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 3%; font-weight: 800;">No</th>
+                    <th rowspan="2" style="border: 1px solid #000000; padding: 4px 4px; width: 11%; font-weight: 800;">Hari / Tanggal</th>
+                    <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 3.5%; font-weight: 800;">Jam<br>Ke</th>
+                    <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 8.5%; font-weight: 800;">Waktu</th>
+                    <th colspan="12" style="border: 1px solid #000000; padding: 3px 2px; font-weight: 800; background: #f1f5f9; text-transform: uppercase; letter-spacing: 0.3px;">
+                      Nama Pengawas Ruang Ujian (Ruang 1 s.d 12)
+                    </th>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => `
+                      <th style="border: 1px solid #000000; padding: 3px 1px; width: 6.16%; font-weight: 800;">
+                        Ruang ${r}
+                      </th>
+                    `).join('')}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${dayConfigs.map(d => {
+                    return sessionTimes.map((st, sIdx) => {
+                      const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+                      const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+                      return `
+                        <tr>
+                          ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: 800; padding: 2px 2px; vertical-align: middle;">${d.no}</td>` : ''}
+                          ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: bold; padding: 2px 3px; vertical-align: middle; text-align: center;">${d.label}</td>` : ''}
+                          <td style="border: 1px solid #000000; font-weight: 800; padding: 2px 1px; background: ${st.sesi === 4 ? '#ecfdf5' : '#ffffff'};">${st.jamKe}</td>
+                          <td style="border: 1px solid #000000; padding: 2px 1px; font-family: monospace; font-size: 6.5pt;">${slotWaktu}</td>
+                          ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(rIdx => {
+                            const code = (rowVals[rIdx] || '').trim().toUpperCase();
+                            const pr = proctorMap[code];
+                            const nama = pr ? pr.nama : (code ? code : '-');
+                            return `
+                              <td style="border: 1px solid #000000; padding: 2px 1px; text-align: center; vertical-align: middle;">
+                                <div style="font-weight: 700; font-size: 6.8pt; line-height: 1.1; color: #0f172a; word-break: break-word;">${nama}</div>
+                                ${code && pr ? `<span style="font-size: 5.5pt; font-weight: 800; color: #4338ca; display: block; line-height: 1;">(${code})</span>` : ''}
+                              </td>
+                            `;
+                          }).join('')}
+                        </tr>
+                      `;
+                    }).join('');
+                  }).join('')}
+                </tbody>
+              </table>
+
+              <!-- FOOTER TTD & PETUNJUK PENGAWAS -->
+              <table style="width: 100%; margin-top: 6px; border: none; font-size: 8.5pt; line-height: 1.25;">
+                <tr>
+                  <td style="width: 60%; border: none; vertical-align: top; text-align: left; padding-left: 4px;">
+                    <div style="font-size: 8pt; color: #334155; line-height: 1.35;">
+                      <strong>Keterangan &amp; Petunjuk Pengawas:</strong><br/>
+                      1. Pengawas ruang hadir di ruang sekretariat panitia ujian 15 menit sebelum waktu dimulai.<br/>
+                      2. Pengawas mengambil naskah soal dan menandatangani daftar hadir pengawas.<br/>
+                      3. Pengawas bertanggung jawab penuh atas ketertiban dan kenyamanan pelaksanaan ujian di ruangan masing-masing.
+                    </div>
+                  </td>
+                  <td style="width: 40%; border: none; vertical-align: top; text-align: center;">
+                    <div>${state.settings.kotaTanggal}</div>
+                    <div style="font-weight: bold;">Ketua Panitia Ujian,</div>
+                    ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 60)}
+                    <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ust. Muhammad Ridwan, S.Pd.'}</div>
+                    <div>NIP/NIY. ${state.settings.nipKetua || '-'}</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          ` : activeTab === 'rekap_harian' ? `
+            <!-- ================================================= -->
+            <!-- FORMAT 2: REKAPAN PENGAWAS PER HARI (SHARE GURU & CETAK F4) -->
+            <!-- ================================================= -->
+            ${daysForRekap.map((d, dIdx) => {
+              // Hitung tugas masing-masing guru pada hari ini
+              const teacherSummary = {};
+              sessionTimes.forEach(st => {
+                const rowCodes = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+                for (let r = 1; r <= 12; r++) {
+                  const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+                  if (code) {
+                    const pr = proctorMap[code];
+                    const tName = pr ? pr.nama : `Pengawas (${code})`;
+                    if (!teacherSummary[tName]) {
+                      teacherSummary[tName] = {
+                        nama: tName,
+                        kode: code,
+                        jabatan: pr ? pr.jabatan : (st.sesi === 4 ? 'Guru Diniyyah' : 'Guru MTs/MA'),
+                        sesi1: '',
+                        sesi2: '',
+                        sesi3: '',
+                        sesi4: '',
+                        total: 0
+                      };
+                    }
+                    teacherSummary[tName]['sesi' + st.sesi] = `R.${String(r).padStart(2, '0')}`;
+                    teacherSummary[tName].total += 1;
+                  }
+                }
+              });
+
+              const teacherList = Object.values(teacherSummary).sort((a, b) => a.nama.localeCompare(b.nama));
+
+              return `
+                <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm; background: #ffffff; color: #000000; min-height: 297mm; box-sizing: border-box; ${dIdx > 0 ? 'page-break-before: always; break-before: page; margin-top: 15px;' : ''}">
+                  
+                  <!-- KOP SURAT RESMI AT-TAHIYYAH -->
+                  ${renderKopSuratF4("REKAPITULASI JADWAL PENGAWAS RUANG UJIAN")}
+
+                  <!-- SUB-BAR HARI & TANGGAL -->
+                  <table style="width: 100%; border-collapse: collapse; border: none; font-size: 10pt; margin-bottom: 10px; line-height: 1.4;">
+                    <tr>
+                      <td style="width: 55%; border: none; vertical-align: top;">
+                        <div><strong>Hari / Tanggal:</strong> <span style="font-size: 10.5pt; font-weight: 800; color: #1e3a8a;">${d.label.toUpperCase()}</span></div>
+                        <div><strong>Waktu Pelaksanaan:</strong> Sesi I (07:30) s.d Sesi IV (14:45 WIB)</div>
+                      </td>
+                      <td style="width: 45%; border: none; vertical-align: top; text-align: right;">
+                        <div><strong>Tahun Pelajaran:</strong> ${state.settings.tahunAjaran || '2025/2026'}</div>
+                        <div><strong>Jumlah Ruangan:</strong> 12 Ruang Ujian (Putra &amp; Putri)</div>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- TABEL 1: PEMBAGIAN PENGAWAS PER RUANG (1-12) & 4 SESI -->
+                  <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; color: #1e293b;">
+                    I. Pembagian Pengawas Ruang 01 s.d 12 Per Sesi:
+                  </div>
+                  <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 8pt; text-align: center; margin-bottom: 12px; line-height: 1.2;">
                     <thead>
-                      <tr style="background: #FFFFFF;">
-                        <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 3.5%; font-weight: 800;">No</th>
-                        <th rowspan="2" style="border: 1px solid #000000; padding: 4px 4px; width: 14%; font-weight: 800;">Hari/Tanggal</th>
-                        <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 5.5%; font-weight: 800;">Jam<br>Ke</th>
-                        <th rowspan="2" style="border: 1px solid #000000; padding: 4px 3px; width: 13%; font-weight: 800;">Waktu</th>
-                        <th colspan="12" style="border: 1px solid #000000; padding: 3px 2px; font-weight: 800;">Kode Pengawas dan Ruang</th>
-                      </tr>
-                      <tr style="background: #FFFFFF;">
-                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => `<th style="border: 1px solid #000000; padding: 3px 1px; width: 5.33%; font-weight: 800;">${r}</th>`).join('')}
+                      <tr style="background: #f1f5f9;">
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 12%; font-weight: 800;">Ruang</th>
+                        <th style="border: 1px solid #000000; padding: 4px 4px; width: 22%; font-weight: 800;">
+                          Sesi I<br/><span style="font-size: 7pt; font-weight: normal;">${getProctorSlotWaktu(d.dayKey, 1)}</span>
+                        </th>
+                        <th style="border: 1px solid #000000; padding: 4px 4px; width: 22%; font-weight: 800;">
+                          Sesi II<br/><span style="font-size: 7pt; font-weight: normal;">${getProctorSlotWaktu(d.dayKey, 2)}</span>
+                        </th>
+                        <th style="border: 1px solid #000000; padding: 4px 4px; width: 22%; font-weight: 800;">
+                          Sesi III<br/><span style="font-size: 7pt; font-weight: normal;">${getProctorSlotWaktu(d.dayKey, 3)}</span>
+                        </th>
+                        <th style="border: 1px solid #000000; padding: 4px 4px; width: 22%; font-weight: 800; background: #ecfdf5;">
+                          Sesi IV (Diniyyah)<br/><span style="font-size: 7pt; font-weight: normal;">${getProctorSlotWaktu(d.dayKey, 4)}</span>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      ${dayConfigs.map(d => {
-        return sessionTimes.map((st, sIdx) => {
-          const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-          const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
-          return `
-                            <tr>
-                              ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: 800; padding: 3px 2px; vertical-align: middle;">${d.no}</td>` : ''}
-                              ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px; vertical-align: middle; text-align: center;">${d.label}</td>` : ''}
-                              <td style="border: 1px solid #000000; font-weight: 800; padding: 2.5px 2px;">${st.jamKe}</td>
-                              <td style="border: 1px solid #000000; padding: 2.5px 2px; font-family: monospace;">${slotWaktu}</td>
-                              ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(rIdx => `
-                                <td style="border: 1px solid #000000; font-weight: bold; padding: 2.5px 1px;">${rowVals[rIdx] || ''}</td>
-                              `).join('')}
-                            </tr>
-                          `;
-        }).join('');
-      }).join('')}
+                      ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => {
+                        const maleCutoff = Math.max(1, Math.min(11, Number(state.maleRoomCount) || 7));
+                        const isMale = r <= maleCutoff;
+                        const roomLabel = `Ruang ${String(r).padStart(2, '0')}`;
+                        const genderBadge = isMale ? 'Pa' : 'Pi';
+
+                        const getCellText = (sesiNum) => {
+                          const rowCodes = state.proctorMatrix?.[d.dayKey]?.[sesiNum] || [];
+                          const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+                          if (!code) return '<span style="color: #94a3b8;">-</span>';
+                          const pr = proctorMap[code];
+                          const nama = pr ? pr.nama : `Pengawas (${code})`;
+                          return `<div style="font-weight: 700; color: #0f172a; line-height: 1.15;">${nama}</div><span style="font-size: 6.8pt; color: #4338ca; font-weight: 800;">[${code}]</span>`;
+                        };
+
+                        return `
+                          <tr class="${r % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}">
+                            <td style="border: 1px solid #000000; font-weight: 800; padding: 3px 2px;">
+                              ${roomLabel} <span style="font-size: 7pt; color: ${isMale ? '#1e40af' : '#9d174d'};">(${genderBadge})</span>
+                            </td>
+                            <td style="border: 1px solid #000000; padding: 2.5px 3px;">${getCellText(1)}</td>
+                            <td style="border: 1px solid #000000; padding: 2.5px 3px;">${getCellText(2)}</td>
+                            <td style="border: 1px solid #000000; padding: 2.5px 3px;">${getCellText(3)}</td>
+                            <td style="border: 1px solid #000000; padding: 2.5px 3px; background: #f0fdf4;">${getCellText(4)}</td>
+                          </tr>
+                        `;
+                      }).join('')}
                     </tbody>
                   </table>
-                </td>
 
-                <!-- TABEL KANAN: NAMA & KODE PENGAWAS (37 BARIS PERSIS GAMBAR) -->
-                <td style="width: 31%; vertical-align: top; border: none; padding: 0 0 0 6px;">
-                  <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 7pt; line-height: 1.15;">
+                  <!-- TABEL 2: REKAPITULASI DAFTAR GURU BERTUGAS HARI INI -->
+                  <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; color: #1e293b;">
+                    II. Rekapitulasi Daftar Guru &amp; Jadwal Mengawas Hari Ini (${teacherList.length} Orang):
+                  </div>
+                  <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 8pt; text-align: center; margin-bottom: 12px; line-height: 1.2;">
                     <thead>
-                      <tr style="background: #FFFFFF;">
-                        <th style="border: 1px solid #000000; padding: 3.5px 2px; width: 10%; text-align: center; font-weight: 800;">No</th>
-                        <th style="border: 1px solid #000000; padding: 3.5px 4px; width: 68%; text-align: center; font-weight: 800;">Nama Pengawas</th>
-                        <th style="border: 1px solid #000000; padding: 3.5px 2px; width: 22%; text-align: center; font-weight: 800;">Kode<br>Pengawas</th>
+                      <tr style="background: #f1f5f9;">
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 4%; font-weight: 800;">No</th>
+                        <th style="border: 1px solid #000000; padding: 4px 6px; width: 34%; font-weight: 800; text-align: left;">Nama Lengkap Pengawas</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 7%; font-weight: 800;">Kode</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 11%; font-weight: 800;">Sesi I</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 11%; font-weight: 800;">Sesi II</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 11%; font-weight: 800;">Sesi III</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 11%; font-weight: 800; background: #ecfdf5;">Sesi IV</th>
+                        <th style="border: 1px solid #000000; padding: 4px 2px; width: 11%; font-weight: 800;">Total</th>
                       </tr>
                     </thead>
                     <tbody>
-                      ${rightTableRows.map(row => `
+                      ${teacherList.length === 0 ? `
                         <tr>
-                          <td style="border: 1px solid #000000; text-align: center; padding: 1.8px 2px; font-weight: bold;">${row.no}</td>
-                          <td style="border: 1px solid #000000; padding: 1.8px 4px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${row.nama || '&nbsp;'}</td>
-                          <td style="border: 1px solid #000000; text-align: center; font-weight: 800; padding: 1.8px 2px;">${row.kode || '&nbsp;'}</td>
+                          <td colspan="8" style="border: 1px solid #000000; padding: 8px; text-align: center; font-style: italic; color: #64748b;">
+                            Belum ada pengawas yang ditugaskan pada hari ${d.label}.
+                          </td>
+                        </tr>
+                      ` : teacherList.map((t, tIdx) => `
+                        <tr class="${tIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}">
+                          <td style="border: 1px solid #000000; font-weight: bold; padding: 2.5px 2px;">${tIdx + 1}</td>
+                          <td style="border: 1px solid #000000; text-align: left; font-weight: 700; padding: 2.5px 6px;">${t.nama}</td>
+                          <td style="border: 1px solid #000000; font-weight: 800; color: #4338ca; padding: 2.5px 2px; background: #faf5ff;">${t.kode}</td>
+                          <td style="border: 1px solid #000000; padding: 2.5px 2px; font-weight: bold; color: ${t.sesi1 ? '#0f172a' : '#cbd5e1'};">${t.sesi1 || '-'}</td>
+                          <td style="border: 1px solid #000000; padding: 2.5px 2px; font-weight: bold; color: ${t.sesi2 ? '#0f172a' : '#cbd5e1'};">${t.sesi2 || '-'}</td>
+                          <td style="border: 1px solid #000000; padding: 2.5px 2px; font-weight: bold; color: ${t.sesi3 ? '#0f172a' : '#cbd5e1'};">${t.sesi3 || '-'}</td>
+                          <td style="border: 1px solid #000000; padding: 2.5px 2px; font-weight: bold; color: ${t.sesi4 ? '#047857' : '#cbd5e1'}; background: ${t.sesi4 ? '#f0fdf4' : 'transparent'};">${t.sesi4 || '-'}</td>
+                          <td style="border: 1px solid #000000; font-weight: 800; padding: 2.5px 2px; background: #f8fafc;">${t.total} Sesi</td>
                         </tr>
                       `).join('')}
                     </tbody>
                   </table>
-                </td>
-              </tr>
-            </table>
 
-          </div>
+                  <!-- FOOTER TTD RESMI KETUA PANITIA -->
+                  ${renderFooterTtdF4('KETUA_ONLY', `
+                    <div style="font-size: 8.5pt; color: #334155; line-height: 1.4;">
+                      <strong>Tata Tertib &amp; Perhatian Pengawas:</strong><br/>
+                      1. Hadir di ruang panitia ujian 15 menit sebelum waktu dimulai.<br/>
+                      2. Menandatangani daftar hadir dan mengambil sampul berkas soal.<br/>
+                      3. Mengisi berita acara dan mengumpulkan lembar jawaban siswa tepat waktu.
+                    </div>
+                  `)}
+                </div>
+              `;
+            }).join('')}
+          ` : `
+            <!-- ================================================= -->
+            <!-- FORMAT 3: PRATINJAU MATRIKS RESMI KODE (F4 LANDSCAPE SESUAI GAMBAR) -->
+            <!-- ================================================= -->
+            <div class="f4-sheet landscape-sheet" data-orientation="landscape" style="width: 330mm; min-height: 215mm; padding: 10mm; font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #000000; background: #FFFFFF; box-sizing: border-box;">
+              
+              <!-- HEADER RESMI SESUAI GAMBAR CONTOH -->
+              <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 5px;">
+                <tr>
+                  <td style="width: 69%; border: none; text-align: center; vertical-align: middle; padding: 0 10px 0 0;">
+                    <div style="font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
+                      ${state.settings.namaUjian ? (state.settings.namaUjian.startsWith('JADWAL') ? state.settings.namaUjian : 'JADWAL PENGAWAS ' + state.settings.namaUjian) : 'JADWAL PENGAWAS PENILAIAN AKHIR SEMESTER GENAP'}
+                    </div>
+                    <div style="font-size: 11pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
+                      ${state.settings.yayasan || 'PONDOK PESANTREN ATTAHIYYAH'}
+                    </div>
+                    <div style="font-size: 10.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.25;">
+                      TAHUN PELAJARAN ${state.settings.tahunAjaran || '2025/2026'}
+                    </div>
+                  </td>
+                  <td style="width: 31%; border: none; text-align: center; vertical-align: middle; padding: 0 0 0 10px;">
+                    <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.25;">
+                      NAMA &amp; KODE PENGAWAS
+                    </div>
+                    <div style="font-size: 9.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.25;">
+                      MTs, MA &amp; DINIYYAH
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- DUA TABEL BERDAMPINGAN: KIRI (JADWAL PENGAWAS) & KANAN (NAMA & KODE PENGAWAS) -->
+              <table style="width: 100%; border-collapse: collapse; border: none;">
+                <tr>
+                  <!-- TABEL KIRI: JADWAL PENGAWAS RUANG (1-12) -->
+                  <td style="width: 69%; vertical-align: top; border: none; padding: 0 6px 0 0;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 7.5pt; text-align: center; line-height: 1.2;">
+                      <thead>
+                        <tr style="background: #FFFFFF;">
+                          <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 3.5%; font-weight: 800;">No</th>
+                          <th rowspan="2" style="border: 1px solid #000000; padding: 4px 4px; width: 14%; font-weight: 800;">Hari/Tanggal</th>
+                          <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 5.5%; font-weight: 800;">Jam<br>Ke</th>
+                          <th rowspan="2" style="border: 1px solid #000000; padding: 4px 3px; width: 13%; font-weight: 800;">Waktu</th>
+                          <th colspan="12" style="border: 1px solid #000000; padding: 3px 2px; font-weight: 800;">Kode Pengawas dan Ruang</th>
+                        </tr>
+                        <tr style="background: #FFFFFF;">
+                          ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => `<th style="border: 1px solid #000000; padding: 3px 1px; width: 5.33%; font-weight: 800;">${r}</th>`).join('')}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${dayConfigs.map(d => {
+                          return sessionTimes.map((st, sIdx) => {
+                            const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+                            const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+                            return `
+                              <tr>
+                                ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: 800; padding: 3px 2px; vertical-align: middle;">${d.no}</td>` : ''}
+                                ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px; vertical-align: middle; text-align: center;">${d.label}</td>` : ''}
+                                <td style="border: 1px solid #000000; font-weight: 800; padding: 2.5px 2px;">${st.jamKe}</td>
+                                <td style="border: 1px solid #000000; padding: 2.5px 2px; font-family: monospace;">${slotWaktu}</td>
+                                ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(rIdx => `
+                                  <td style="border: 1px solid #000000; font-weight: bold; padding: 2.5px 1px;">${rowVals[rIdx] || ''}</td>
+                                `).join('')}
+                              </tr>
+                            `;
+                          }).join('');
+                        }).join('')}
+                      </tbody>
+                    </table>
+                  </td>
+
+                  <!-- TABEL KANAN: NAMA & KODE PENGAWAS -->
+                  <td style="width: 31%; vertical-align: top; border: none; padding: 0 0 0 6px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000000; font-size: 7.2pt; line-height: 1.15;">
+                      <thead>
+                        <tr style="background: #FFFFFF;">
+                          <th style="border: 1px solid #000000; padding: 3px 2px; width: 10%; text-align: center; font-weight: 800;">No</th>
+                          <th style="border: 1px solid #000000; padding: 3px 4px; width: 72%; text-align: center; font-weight: 800;">Nama Pengawas</th>
+                          <th style="border: 1px solid #000000; padding: 3px 2px; width: 18%; text-align: center; font-weight: 800;">Kode</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${rightTableRows.map(row => `
+                          <tr>
+                            <td style="border: 1px solid #000000; text-align: center; padding: 1.8px 2px; font-weight: bold;">${row.no}</td>
+                            <td style="border: 1px solid #000000; padding: 1.8px 4px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${row.nama || '&nbsp;'}</td>
+                            <td style="border: 1px solid #000000; text-align: center; font-weight: 800; padding: 1.8px 2px;">${row.kode || '&nbsp;'}</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+            </div>
+          `}
         </div>
       `;
     }
@@ -7111,7 +7447,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 38)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 58)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaMA')" />
@@ -7132,7 +7468,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 38)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 58)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaMTS')" />
@@ -7153,7 +7489,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 38)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 58)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaDiniyyah')" />
@@ -7174,7 +7510,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-indigo-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 38)}</div>
+                    <div>${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 58)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKetuaPanitia')" />
@@ -9000,6 +9336,137 @@
         if (!state.proctorMatrix[day][sesi]) state.proctorMatrix[day][sesi] = Array(12).fill('');
         state.proctorMatrix[day][sesi][roomIdx] = (val || '').toUpperCase().trim();
         state.lastSavedProctorSchedule = null;
+      },
+      setProctorRekapDay: (day) => {
+        state.proctorRekapDay = day;
+        renderApp();
+      },
+      resetProctorMatrixInputs: () => {
+        if (confirm("Apakah Anda yakin ingin menghapus bersih semua kode pengawas pada kolom input (Hari, Sesi, Ruang 1-12)? Tindakan ini akan mengosongkan seluruh kolom input pengawas.")) {
+          const dayKeys = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+          const emptyMatrix = {};
+          dayKeys.forEach(d => {
+            emptyMatrix[d] = {
+              1: Array(12).fill(''),
+              2: Array(12).fill(''),
+              3: Array(12).fill(''),
+              4: Array(12).fill('')
+            };
+          });
+          state.proctorMatrix = emptyMatrix;
+          state.lastSavedProctorSchedule = null;
+          renderApp();
+          notify("Semua kolom input kode pengawas telah dihapus bersih. Klik 'Simpan Jadwal Pengawas' jika ingin menyimpan perubahan.", "success");
+        }
+      },
+      copyProctorDayScheduleWA: (targetDay) => {
+        const dayKey = targetDay || state.proctorRekapDay || 'Senin';
+        const dayKeys = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const daysToCopy = (dayKey === 'ALL') ? dayKeys : [dayKey];
+
+        const proctorMap = {};
+        (state.proctors || []).forEach(p => {
+          if (p.kode) proctorMap[p.kode.toUpperCase().trim()] = p;
+        });
+
+        const getSlotWaktu = (dKey, sesiNum) => {
+          const sched = (state.schedules && state.schedules[dKey]) || (typeof DEFAULT_SCHEDULES !== 'undefined' && DEFAULT_SCHEDULES[dKey]);
+          if (sched && sched.slots) {
+            const slot = sched.slots.find(s => Number(s.sesi) === Number(sesiNum));
+            if (slot && slot.waktu) return slot.waktu;
+          }
+          if (sesiNum === 1) return dKey === 'Jumat' ? '07:15 - 08:30' : '07:30 - 08:45';
+          if (sesiNum === 2) return dKey === 'Jumat' ? '08:45 - 10:00' : '09:00 - 10:15';
+          if (sesiNum === 3) return dKey === 'Jumat' ? '10:15 - 11:30' : '10:30 - 11:45';
+          return '14:00 - 14:45';
+        };
+
+        const lines = [];
+        lines.push(`📋 *JADWAL PENGAWAS RUANG UJIAN*`);
+        lines.push(`🏢 *${(state.settings.yayasan || 'PONDOK PESANTREN ATTAHIYYAH').toUpperCase()}*`);
+        lines.push(`📝 *${(state.settings.namaUjian || 'PENILAIAN AKHIR SEMESTER').toUpperCase()}*`);
+        lines.push(`📅 Tahun Pelajaran: ${state.settings.tahunAjaran || '2025/2026'}`);
+        lines.push(`================================`);
+
+        daysToCopy.forEach(dKey => {
+          const sched = (state.schedules && state.schedules[dKey]) || (typeof DEFAULT_SCHEDULES !== 'undefined' && DEFAULT_SCHEDULES[dKey]) || {};
+          const dayLabel = dKey === 'Jumat' ? "Jum'at" : dKey;
+          const tanggal = sched.tanggal ? `${dayLabel}, ${sched.tanggal}` : dayLabel;
+
+          lines.push(`\n📌 *HARI: ${tanggal.toUpperCase()}*`);
+          lines.push(`--------------------------------`);
+
+          const sessionTimes = [
+            { sesi: 1, jamKe: 'I', label: 'Sesi 1 (MTs / MA)' },
+            { sesi: 2, jamKe: 'II', label: 'Sesi 2 (MTs / MA)' },
+            { sesi: 3, jamKe: 'III', label: 'Sesi 3 (MTs / MA)' },
+            { sesi: 4, jamKe: 'IV', label: 'Sesi 4 (Diniyyah)' }
+          ];
+
+          sessionTimes.forEach(st => {
+            const waktu = getSlotWaktu(dKey, st.sesi);
+            const rowCodes = state.proctorMatrix?.[dKey]?.[st.sesi] || [];
+            lines.push(`\n⏰ *${st.label}* (${waktu} WIB):`);
+
+            let assignedCount = 0;
+            for (let r = 1; r <= 12; r++) {
+              const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+              if (code) {
+                const pr = proctorMap[code];
+                const nama = pr ? pr.nama : `Pengawas (${code})`;
+                lines.push(`  • Ruang ${String(r).padStart(2, '0')}: *${nama}* (${code})`);
+                assignedCount++;
+              }
+            }
+            if (assignedCount === 0) {
+              lines.push(`  • (Belum ada pembagian pengawas)`);
+            }
+          });
+
+          // Ringkasan Guru Mengawas Hari Ini
+          const teacherDuties = {};
+          sessionTimes.forEach(st => {
+            const rowCodes = state.proctorMatrix?.[dKey]?.[st.sesi] || [];
+            for (let r = 1; r <= 12; r++) {
+              const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+              if (code) {
+                const pr = proctorMap[code];
+                const key = pr ? pr.nama : `Pengawas (${code})`;
+                if (!teacherDuties[key]) {
+                  teacherDuties[key] = { kode: code, sessions: [] };
+                }
+                teacherDuties[key].sessions.push(`Sesi ${st.sesi} (R.${String(r).padStart(2, '0')})`);
+              }
+            }
+          });
+
+          const teacherKeys = Object.keys(teacherDuties);
+          if (teacherKeys.length > 0) {
+            lines.push(`\n📊 *REKAP GURU MENGAWAS (${dayLabel}):*`);
+            teacherKeys.sort().forEach((tName, idx) => {
+              const td = teacherDuties[tName];
+              lines.push(`${idx + 1}. *${tName}* [${td.kode}]: ${td.sessions.join(', ')} (Total: ${td.sessions.length} Sesi)`);
+            });
+          }
+          lines.push(`--------------------------------`);
+        });
+
+        lines.push(`\n⚠️ *Catatan Pengawas:*`);
+        lines.push(`1. Mohon hadir di ruang panitia ujian 15 menit sebelum waktu dimulai.`);
+        lines.push(`2. Mengambil naskah soal & menandatangani daftar hadir pengawas.`);
+        lines.push(`3. Menyerahkan lembar jawaban dan berita acara setelah selesai.`);
+        lines.push(`\nTerima kasih atas kerja sama dan dedikasi Bapak/Ibu sekalian. 🙏`);
+
+        const fullText = lines.join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(fullText).then(() => {
+            notify(`Format WhatsApp Jadwal Pengawas (${dayKey === 'ALL' ? 'Semua Hari' : dayKey}) berhasil disalin ke clipboard! Siap di-paste ke grup WhatsApp guru.`, 'success');
+          }).catch(err => {
+            prompt("Salin teks berikut untuk dibagikan ke WhatsApp:", fullText);
+          });
+        } else {
+          prompt("Salin teks berikut untuk dibagikan ke WhatsApp:", fullText);
+        }
       },
       setProctorHadirDay: (day) => {
         state.proctorHadirDay = day;
