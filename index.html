@@ -3098,6 +3098,192 @@
         </div>
       `;
     }
+    // REKAPITULASI JADWAL MATA PELAJARAN PER JENJANG (MTS, MA, DINIYYAH)
+    function renderScheduleRekapMtsF4Sheet() {
+      const isDinSlot = (idx, s) => idx === 3 || s.kategori === 'Diniyyah';
+      const unitTitle = `REKAPITULASI JADWAL MATA PELAJARAN MADRASAH TSANAWIYAH (MTs)`;
+
+      return `
+        <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm; background: #ffffff; color: #000000; min-height: 297mm; box-sizing: border-box; page-break-after: always; margin-bottom: 24px;">
+          ${renderKopSuratF4(unitTitle)}
+
+          <div style="margin-bottom: 8px; font-size: 9.5pt; display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #0f172a; padding-bottom: 4px;">
+            <span><strong>Jenjang:</strong> Madrasah Tsanawiyah (MTs) &bull; Kelas VII, VIII, IX</span>
+            <span><strong>Tahun Pelajaran:</strong> ${state.settings.tahunAjaran || '2025/2026'}</span>
+          </div>
+
+          <table class="f4-table" style="font-size: 9pt; width: 100%; border-collapse: collapse; border: 1.5px solid #000000; text-align: center;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 16%; font-weight: 800;">Hari / Tanggal</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 8%; font-weight: 800;">Jam Ke</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 14%; font-weight: 800;">Waktu</th>
+                <th colspan="3" style="border: 1px solid #000000; padding: 4px 2px; font-weight: 800; background: #ecfdf5; text-transform: uppercase;">Mata Pelajaran Tingkat MTs</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 14%; font-weight: 800;">Kategori</th>
+              </tr>
+              <tr style="background: #f8fafc;">
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas VII</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas VIII</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas IX</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${DAY_LIST.map(day => {
+                const dObj = state.schedules[day];
+                return (dObj?.slots || []).map((s, idx) => {
+                  const isDin = isDinSlot(idx, s);
+                  const mapel7 = getSlotSubjectForClass(s, 'MTS_7');
+                  const mapel8 = getSlotSubjectForClass(s, 'MTS_8');
+                  const mapel9 = getSlotSubjectForClass(s, 'MTS_9');
+                  const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MTs (${idx + 1})`;
+                  return `
+                    <tr style="${isDin ? 'background: #f0fdf4;' : (idx % 2 === 1 ? 'background: #f8fafc;' : '')}">
+                      ${idx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; text-align: center; font-weight: bold; vertical-align: middle;">${day.toUpperCase()}<br/><span style="font-size: 8.5pt; font-weight: normal;">${dObj.tanggal}</span></td>` : ''}
+                      <td style="border: 1px solid #000000; text-align: center; font-weight: bold;">Ke-${s.sesi}</td>
+                      <td style="border: 1px solid #000000; text-align: center; font-family: monospace; font-size: 8.5pt;">${s.waktu} WIB</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel7}</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel8}</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel9}</td>
+                      <td style="border: 1px solid #000000; text-align: center; font-size: 8pt; font-weight: ${isDin ? 'bold' : 'normal'}; color: ${isDin ? '#047857' : '#334155'};">${kategoriText}</td>
+                    </tr>
+                  `;
+                }).join('');
+              }).join('')}
+            </tbody>
+          </table>
+
+          <!-- Footer TTD Kepala MTs & Ketua Panitia -->
+          ${renderFooterTtdF4('KEPALA_MTS_KETUA')}
+        </div>
+      `;
+    }
+
+    function renderScheduleRekapMaF4Sheet() {
+      const isDinSlot = (idx, s) => idx === 3 || s.kategori === 'Diniyyah';
+      const unitTitle = `REKAPITULASI JADWAL MATA PELAJARAN MADRASAH ALIYAH (MA)`;
+
+      return `
+        <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm; background: #ffffff; color: #000000; min-height: 297mm; box-sizing: border-box; page-break-after: always; margin-bottom: 24px;">
+          ${renderKopSuratF4(unitTitle)}
+
+          <div style="margin-bottom: 8px; font-size: 9.5pt; display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #0f172a; padding-bottom: 4px;">
+            <span><strong>Jenjang:</strong> Madrasah Aliyah (MA) &bull; Kelas X, XI, XII</span>
+            <span><strong>Tahun Pelajaran:</strong> ${state.settings.tahunAjaran || '2025/2026'}</span>
+          </div>
+
+          <table class="f4-table" style="font-size: 9pt; width: 100%; border-collapse: collapse; border: 1.5px solid #000000; text-align: center;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 16%; font-weight: 800;">Hari / Tanggal</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 8%; font-weight: 800;">Jam Ke</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 14%; font-weight: 800;">Waktu</th>
+                <th colspan="3" style="border: 1px solid #000000; padding: 4px 2px; font-weight: 800; background: #e0e7ff; text-transform: uppercase;">Mata Pelajaran Tingkat MA</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 14%; font-weight: 800;">Kategori</th>
+              </tr>
+              <tr style="background: #f8fafc;">
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas X</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas XI</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 16%; font-weight: 800;">Kelas XII</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${DAY_LIST.map(day => {
+                const dObj = state.schedules[day];
+                return (dObj?.slots || []).map((s, idx) => {
+                  const isDin = isDinSlot(idx, s);
+                  const mapel10 = getSlotSubjectForClass(s, 'MA_10');
+                  const mapel11 = getSlotSubjectForClass(s, 'MA_11');
+                  const mapel12 = getSlotSubjectForClass(s, 'MA_12');
+                  const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MA (${idx + 1})`;
+                  return `
+                    <tr style="${isDin ? 'background: #f5f3ff;' : (idx % 2 === 1 ? 'background: #f8fafc;' : '')}">
+                      ${idx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; text-align: center; font-weight: bold; vertical-align: middle;">${day.toUpperCase()}<br/><span style="font-size: 8.5pt; font-weight: normal;">${dObj.tanggal}</span></td>` : ''}
+                      <td style="border: 1px solid #000000; text-align: center; font-weight: bold;">Ke-${s.sesi}</td>
+                      <td style="border: 1px solid #000000; text-align: center; font-family: monospace; font-size: 8.5pt;">${s.waktu} WIB</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel10}</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel11}</td>
+                      <td style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px;">${mapel12}</td>
+                      <td style="border: 1px solid #000000; text-align: center; font-size: 8pt; font-weight: ${isDin ? 'bold' : 'normal'}; color: ${isDin ? '#4338ca' : '#334155'};">${kategoriText}</td>
+                    </tr>
+                  `;
+                }).join('');
+              }).join('')}
+            </tbody>
+          </table>
+
+          <!-- Footer TTD Kepala MA & Ketua Panitia -->
+          ${renderFooterTtdF4('KEPALA_MA_KETUA')}
+        </div>
+      `;
+    }
+
+    function renderScheduleRekapDiniyyahF4Sheet() {
+      const unitTitle = `REKAPITULASI JADWAL MATA PELAJARAN MADRASAH DINIYYAH`;
+
+      return `
+        <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm; background: #ffffff; color: #000000; min-height: 297mm; box-sizing: border-box; page-break-after: always; margin-bottom: 24px;">
+          ${renderKopSuratF4(unitTitle)}
+
+          <div style="margin-bottom: 8px; font-size: 9.5pt; display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #0f172a; padding-bottom: 4px;">
+            <span><strong>Jenjang:</strong> Madrasah Diniyyah Takmiliyah &bull; Tingkat Ula &amp; Tingkat Wustho</span>
+            <span><strong>Waktu:</strong> Sesi IV (14:00 - 14:45 WIB) &bull; Tahun Pelajaran: ${state.settings.tahunAjaran || '2025/2026'}</span>
+          </div>
+
+          <table class="f4-table" style="font-size: 8.5pt; width: 100%; border-collapse: collapse; border: 1.5px solid #000000; text-align: center;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 4%; font-weight: 800;">No</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 4px; width: 17%; font-weight: 800;">Hari / Tanggal</th>
+                <th rowspan="2" style="border: 1px solid #000000; padding: 4px 2px; width: 13%; font-weight: 800;">Waktu</th>
+                <th colspan="3" style="border: 1px solid #000000; padding: 4px 2px; font-weight: 800; background: #ecfdf5; text-transform: uppercase;">Tingkat Ula (Setara MTs)</th>
+                <th colspan="3" style="border: 1px solid #000000; padding: 4px 2px; font-weight: 800; background: #e0e7ff; text-transform: uppercase;">Tingkat Wustho (Setara MA)</th>
+              </tr>
+              <tr style="background: #f8fafc;">
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 11%; font-weight: 800;">1 Ula (Kls VII)</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 11%; font-weight: 800;">2 Ula (Kls VIII)</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 11%; font-weight: 800;">3 Ula (Kls IX)</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 11%; font-weight: 800;">1 Wustho (Kls X)</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 11%; font-weight: 800;">2 Wustho (Kls XI)</th>
+                <th style="border: 1px solid #000000; padding: 3px 2px; width: 12%; font-weight: 800;">3 Wustho (Kls XII)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${DAY_LIST.map((day, dIdx) => {
+                const dObj = state.schedules[day];
+                const dinSlot = (dObj?.slots || []).find((s, idx) => idx === 3 || s.kategori === 'Diniyyah') || (dObj?.slots || [])[3] || {};
+                const mapelUla1 = getSlotSubjectForClass(dinSlot, 'MTS_7');
+                const mapelUla2 = getSlotSubjectForClass(dinSlot, 'MTS_8');
+                const mapelUla3 = getSlotSubjectForClass(dinSlot, 'MTS_9');
+                const mapelWustho1 = getSlotSubjectForClass(dinSlot, 'MA_10');
+                const mapelWustho2 = getSlotSubjectForClass(dinSlot, 'MA_11');
+                const mapelWustho3 = getSlotSubjectForClass(dinSlot, 'MA_12');
+                return `
+                  <tr class="${dIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}">
+                    <td style="border: 1px solid #000000; font-weight: bold; padding: 4px 2px;">${dIdx + 1}</td>
+                    <td style="border: 1px solid #000000; text-align: center; font-weight: bold; padding: 4px 4px;">
+                      ${day.toUpperCase()}<br/><span style="font-size: 7.5pt; font-weight: normal; color: #475569;">${dObj.tanggal}</span>
+                    </td>
+                    <td style="border: 1px solid #000000; font-family: monospace; font-size: 8pt; padding: 4px 2px;">
+                      ${dinSlot.waktu || '14:00 - 14:45'} WIB
+                    </td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #047857;">${mapelUla1}</td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #047857;">${mapelUla2}</td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #047857;">${mapelUla3}</td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #4338ca;">${mapelWustho1}</td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #4338ca;">${mapelWustho2}</td>
+                    <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #4338ca;">${mapelWustho3}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+
+          <!-- Footer TTD Kepala Diniyyah & Ketua Panitia -->
+          ${renderFooterTtdF4('KEPALA_DINIYYAH_KETUA')}
+        </div>
+      `;
+    }
+
     function renderRoomSelectorBar() {
       const isRuanganDenah = state.activeMenu === 'ruangan_denah';
       const isLabelMeja = state.activeMenu === 'label_meja';
@@ -4997,7 +5183,8 @@
 
     // MODUL 5: JADWAL MATA PELAJARAN (SENIN–SABTU: 6 JADWAL KELAS BERBEDA — MTS 7,8,9 & MA 10,11,12)
     function renderModuleJadwalMapel() {
-      const activeClassId = state.selectedScheduleClass || 'MTS_7';
+      const activeClassId = state.selectedScheduleClass || 'REKAP_MTS';
+      const isRekap = typeof activeClassId === 'string' && activeClassId.startsWith('REKAP_');
       const isAll = activeClassId === 'ALL';
       const activeClass = SCHEDULE_CLASSES.find(c => c.id === activeClassId) || SCHEDULE_CLASSES[0];
 
@@ -5009,115 +5196,240 @@
                 <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </span>
-                <h2 class="text-base font-extrabold text-slate-800 uppercase tracking-wide">Jadwal Mata Pelajaran 6 Kelas (MTs &amp; MA)</h2>
+                <h2 class="text-base font-extrabold text-slate-800 uppercase tracking-wide">
+                  ${activeClassId === 'REKAP_MTS'
+                    ? 'Rekapitulasi Jadwal Mapel Madrasah Tsanawiyah (MTs)'
+                    : activeClassId === 'REKAP_MA'
+                    ? 'Rekapitulasi Jadwal Mapel Madrasah Aliyah (MA)'
+                    : activeClassId === 'REKAP_DINIYYAH'
+                    ? 'Rekapitulasi Jadwal Mapel Madrasah Diniyyah (Ula & Wustho)'
+                    : activeClassId === 'REKAP_ALL'
+                    ? 'Rekapitulasi Jadwal Mata Pelajaran 3 Jenjang (MTs, MA, Diniyyah)'
+                    : 'Jadwal Mata Pelajaran ' + activeClass.name
+                  }
+                </h2>
               </div>
-              <p class="text-xs text-slate-500 mt-1">Setiap kelas memiliki mata pelajaran yang berbeda (3 Mapel Sekolah + 1 Mapel Diniyyah / hari). Pilih kelas untuk mengedit jadwalnya, atau pilih <strong>Semua 6 Jadwal</strong> untuk melihat dan mencetak seluruh jadwal sekaligus.</p>
+              <p class="text-xs text-slate-500 mt-1">
+                ${isRekap
+                  ? 'Format rekapitulasi per jenjang menampilkan seluruh kelas berdampingan dalam 1 lembar F4 resmi, siap cetak dan dibagikan.'
+                  : 'Setiap kelas memiliki mata pelajaran yang berbeda untuk setiap sesi ujian. Pilih kelas di bawah untuk mengedit atau melihat pratinjau.'
+                }
+              </p>
             </div>
 
-            <!-- Action Buttons: Import, Template, Simpan, Docx, Bulk -->
-            <div class="flex flex-wrap items-center gap-2">
-              <label class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-xs font-bold transition inline-flex items-center gap-1.5 cursor-pointer shadow-sm shadow-emerald-500/20 active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                Import Mapel .xlsx
-                <input type="file" accept=".xlsx,.xls" class="hidden" onchange="window.appActions.importMapelXlsx(event)" />
-              </label>
-
-              <button type="button" onclick="window.appActions.downloadTemplateMapel()" class="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition inline-flex items-center gap-1.5 active:scale-95" title="Download format file Excel untuk jadwal 6 kelas">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                Format .xlsx
-              </button>
-
-              <button onclick="window.appActions.saveSchedules()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-sm shadow-indigo-500/25 text-white text-xs font-bold transition active:scale-95">
-                Simpan Jadwal
-              </button>
-
-              <!-- 🖨️ Cetak -->
-              <button type="button" onclick="window.appActions.printPreview()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-1 active:scale-95" title="Cetak jadwal kelas aktif">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <!-- Action Buttons: Word, PDF, Excel -->
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                onclick="window.appActions.printPreview()"
+                class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold transition shadow-sm shadow-emerald-500/25 inline-flex items-center gap-1.5 active:scale-95"
+                title="Cetak lembar aktif"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                 Cetak
               </button>
 
-              <!-- 📄 Word Group -->
+              <!-- 📄 Word Group (.docx) -->
               <div class="inline-flex rounded-xl shadow-sm border border-blue-500/40 overflow-hidden">
-                <button type="button" onclick="window.appActions.saveDocx()" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai Word .docx">
+                <button
+                  type="button"
+                  onclick="window.appActions.saveDocx()"
+                  class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95"
+                  title="Simpan lembar aktif sebagai file Word .docx"
+                >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Word
                 </button>
-                <button type="button" onclick="window.appActions.bulkSaveDocx()" class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal kelas ke dalam 1 file Word .docx">
+                <button
+                  type="button"
+                  onclick="window.appActions.bulkSaveDocx()"
+                  class="px-2.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold transition border-l border-indigo-500/50 inline-flex items-center gap-1 active:scale-95"
+                  title="Download seluruh jadwal (Semua Rekap Jenjang & 6 Kelas) ke dalam 1 file Word .docx"
+                >
                   Semua
                 </button>
               </div>
 
               <!-- 📕 PDF Group -->
               <div class="inline-flex rounded-xl shadow-sm border border-rose-500/40 overflow-hidden">
-                <button type="button" onclick="window.appActions.savePdf()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95" title="Simpan sebagai file PDF">
+                <button
+                  type="button"
+                  onclick="window.appActions.savePdf()"
+                  class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1 active:scale-95"
+                  title="Simpan lembar aktif sebagai file PDF"
+                >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                   PDF
                 </button>
-                <button type="button" onclick="window.appActions.bulkSavePdf()" class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95" title="Simpan seluruh jadwal kelas ke dalam 1 file PDF">
+                <button
+                  type="button"
+                  onclick="window.appActions.bulkSavePdf()"
+                  class="px-2.5 py-1.5 bg-rose-800 hover:bg-rose-900 text-white text-xs font-bold transition border-l border-rose-600/50 inline-flex items-center gap-1 active:scale-95"
+                  title="Download seluruh jadwal ke dalam 1 file PDF"
+                >
                   Semua
                 </button>
               </div>
 
               <!-- 📊 Excel -->
-              <button type="button" onclick="window.appActions.exportExcel()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95" title="Ekspor jadwal mata pelajaran ke file Excel (.xlsx)">
+              <button
+                type="button"
+                onclick="window.appActions.exportExcel()"
+                class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white text-xs font-bold transition shadow-sm border border-emerald-500/40 inline-flex items-center gap-1 active:scale-95"
+                title="Ekspor rekap jadwal per jenjang ke file Excel (.xlsx)"
+              >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Excel
               </button>
             </div>
           </div>
 
-          <!-- Class Selector Pill Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/80">
-            <!-- MTs Group -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-1 rounded-lg border border-emerald-200 mr-1">
-                Tingkat MTs:
-              </span>
-              ${SCHEDULE_CLASSES.filter(c => c.unit === 'MTs').map(c => `
+          <!-- Tab & Jenjang Selector Bar -->
+          <div class="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 space-y-2.5">
+            <!-- Row 1: REKAPITULASI JADWAL PER JENJANG -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200/70">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-purple-900 bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-200 flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Rekapitulasi Per Jenjang:
+                </span>
                 <button
                   type="button"
-                  onclick="window.appActions.setScheduleClass('${c.id}')"
-                  class="px-3 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${activeClassId === c.id ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm shadow-emerald-500/30' : 'bg-white hover:bg-emerald-50 text-slate-700 border border-slate-200/80'}"
+                  onclick="window.appActions.setScheduleClass('REKAP_MTS')"
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 inline-flex items-center gap-1.5 ${activeClassId === 'REKAP_MTS' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-500/30' : 'bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300'}"
+                  title="Lihat rekapitulasi jadwal mapel MTs (Kelas VII, VIII, IX) dalam 1 lembar F4"
                 >
-                  ${c.name}
+                  <span>📗</span> Rekap Mapel MTs
                 </button>
-              `).join('')}
-            </div>
-
-            <!-- Divider -->
-            <div class="hidden lg:block w-px h-6 bg-slate-200"></div>
-
-            <!-- MA Group -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-800 bg-indigo-100/80 px-2 py-1 rounded-lg border border-indigo-200 mr-1">
-                Tingkat MA:
-              </span>
-              ${SCHEDULE_CLASSES.filter(c => c.unit === 'MA').map(c => `
                 <button
                   type="button"
-                  onclick="window.appActions.setScheduleClass('${c.id}')"
-                  class="px-3 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${activeClassId === c.id ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm shadow-indigo-500/30' : 'bg-white hover:bg-indigo-50 text-slate-700 border border-slate-200/80'}"
+                  onclick="window.appActions.setScheduleClass('REKAP_MA')"
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 inline-flex items-center gap-1.5 ${activeClassId === 'REKAP_MA' ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm shadow-indigo-500/30' : 'bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-300'}"
+                  title="Lihat rekapitulasi jadwal mapel MA (Kelas X, XI, XII) dalam 1 lembar F4"
                 >
-                  ${c.name}
+                  <span>📘</span> Rekap Mapel MA
                 </button>
-              `).join('')}
+                <button
+                  type="button"
+                  onclick="window.appActions.setScheduleClass('REKAP_DINIYYAH')"
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 inline-flex items-center gap-1.5 ${activeClassId === 'REKAP_DINIYYAH' ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-sm shadow-amber-500/30' : 'bg-white hover:bg-amber-50 text-amber-800 border border-amber-300'}"
+                  title="Lihat rekapitulasi jadwal mapel Diniyyah (Tingkat Ula & Wustho) dalam 1 lembar F4"
+                >
+                  <span>📙</span> Rekap Mapel Diniyyah
+                </button>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  onclick="window.appActions.setScheduleClass('REKAP_ALL')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 inline-flex items-center gap-1 ${activeClassId === 'REKAP_ALL' ? 'bg-gradient-to-r from-purple-700 to-indigo-800 text-white shadow-sm' : 'bg-white hover:bg-purple-50 text-purple-800 border border-purple-300'}"
+                  title="Tampilkan seluruh 3 lembar rekapitulasi jenjang (MTs, MA, Diniyyah)"
+                >
+                  <span>📑</span> Cetak Semua Rekap (3 Jenjang)
+                </button>
+              </div>
             </div>
 
-            <!-- All Button -->
-            <div class="flex items-center gap-1.5">
-              <button
-                type="button"
-                onclick="window.appActions.setScheduleClass('ALL')"
-                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${isAll ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/30' : 'bg-white hover:bg-amber-50 text-slate-700 border border-amber-200/80'}"
-              >
-                ✨ Pratinjau Semua 6 Jadwal
-              </button>
+            <!-- Row 2: JADWAL PER KELAS (SATUAN) -->
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <!-- MTs Group -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-1 rounded-lg border border-emerald-200 mr-1">
+                  Kelas MTs:
+                </span>
+                ${SCHEDULE_CLASSES.filter(c => c.unit === 'MTs').map(c => `
+                  <button
+                    type="button"
+                    onclick="window.appActions.setScheduleClass('${c.id}')"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${activeClassId === c.id ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm shadow-emerald-500/30' : 'bg-white hover:bg-emerald-50 text-slate-700 border border-slate-200/80'}"
+                  >
+                    ${c.name}
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- Divider -->
+              <div class="hidden lg:block w-px h-6 bg-slate-200"></div>
+
+              <!-- MA Group -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-800 bg-indigo-100/80 px-2 py-1 rounded-lg border border-indigo-200 mr-1">
+                  Kelas MA:
+                </span>
+                ${SCHEDULE_CLASSES.filter(c => c.unit === 'MA').map(c => `
+                  <button
+                    type="button"
+                    onclick="window.appActions.setScheduleClass('${c.id}')"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${activeClassId === c.id ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm shadow-indigo-500/30' : 'bg-white hover:bg-indigo-50 text-slate-700 border border-slate-200/80'}"
+                  >
+                    ${c.name}
+                  </button>
+                `).join('')}
+              </div>
+
+              <!-- All Single Classes Button -->
+              <div class="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onclick="window.appActions.setScheduleClass('ALL')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 ${isAll ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/30' : 'bg-white hover:bg-amber-50 text-slate-700 border border-amber-200/80'}"
+                  title="Lihat semua 6 jadwal kelas satuan"
+                >
+                  Semua 6 Kelas Satuan
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Schedule Editor per Class (Active when single class selected) -->
-          ${!isAll ? `
+          <!-- Schedule Editor or Rekap Banner -->
+          ${isRekap ? `
+            <div class="p-4 rounded-xl bg-gradient-to-r ${activeClassId === 'REKAP_MTS' ? 'from-emerald-50 to-teal-50 border-emerald-200 text-emerald-950' : activeClassId === 'REKAP_MA' ? 'from-indigo-50 to-purple-50 border-indigo-200 text-indigo-950' : activeClassId === 'REKAP_DINIYYAH' ? 'from-amber-50 to-orange-50 border-amber-200 text-amber-950' : 'from-violet-50 to-indigo-50 border-violet-200 text-violet-950'} border flex flex-wrap items-center justify-between gap-3 shadow-sm">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">${activeClassId === 'REKAP_MTS' ? '📗' : activeClassId === 'REKAP_MA' ? '📘' : activeClassId === 'REKAP_DINIYYAH' ? '📙' : '📑'}</span>
+                <div>
+                  <h4 class="text-xs font-extrabold uppercase tracking-wide">
+                    ${activeClassId === 'REKAP_MTS'
+                      ? 'Mode Pratinjau Rekapitulasi Jadwal MTs (Kelas VII, VIII, IX)'
+                      : activeClassId === 'REKAP_MA'
+                      ? 'Mode Pratinjau Rekapitulasi Jadwal MA (Kelas X, XI, XII)'
+                      : activeClassId === 'REKAP_DINIYYAH'
+                      ? 'Mode Pratinjau Rekapitulasi Jadwal Diniyyah (Tingkat Ula & Tingkat Wustho)'
+                      : 'Mode Cetak Semua Rekapitulasi 3 Jenjang (MTs, MA, Diniyyah)'}
+                  </h4>
+                  <p class="text-[11px] opacity-80 mt-0.5">
+                    ${activeClassId === 'REKAP_MTS'
+                      ? 'Menampilkan rekap seluruh mata pelajaran tingkat MTs berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+                      : activeClassId === 'REKAP_MA'
+                      ? 'Menampilkan rekap seluruh mata pelajaran tingkat MA berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+                      : activeClassId === 'REKAP_DINIYYAH'
+                      ? 'Menampilkan rekap seluruh mata pelajaran Diniyyah (Ula & Wustho) pada Sesi IV pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+                      : 'Menampilkan seluruh 3 lembar rekapitulasi jenjang (MTs, MA, dan Diniyyah) secara berurutan siap dicetak/diekspor.'}
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10.5px] font-bold text-slate-500 mr-1">Edit Mata Pelajaran:</span>
+                ${activeClassId === 'REKAP_MTS'
+                  ? SCHEDULE_CLASSES.filter(c => c.unit === 'MTs').map(c => `
+                    <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold transition shadow-2xs">
+                      Edit ${c.shortName}
+                    </button>
+                  `).join('')
+                  : activeClassId === 'REKAP_MA'
+                  ? SCHEDULE_CLASSES.filter(c => c.unit === 'MA').map(c => `
+                    <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-100 text-indigo-800 border border-indigo-300 text-[11px] font-bold transition shadow-2xs">
+                      Edit ${c.shortName}
+                    </button>
+                  `).join('')
+                  : SCHEDULE_CLASSES.map(c => `
+                    <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[10px] font-bold transition">
+                      ${c.shortName}
+                    </button>
+                  `).join('')
+                }
+              </div>
+            </div>
+          ` : !isAll ? `
             <div class="pt-2">
               <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-bold text-slate-700 flex items-center gap-2">
@@ -5129,8 +5441,8 @@
 
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                 ${DAY_LIST.map(day => {
-        const dayObj = state.schedules[day];
-        return `
+                  const dayObj = state.schedules[day];
+                  return `
                     <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/70 space-y-2.5 shadow-sm">
                       <div class="flex items-center justify-between">
                         <span class="px-2.5 py-0.5 rounded-full ${activeClass.unit === 'MA' ? 'bg-indigo-600' : 'bg-emerald-600'} text-white text-[11px] font-extrabold uppercase tracking-wide">${day}</span>
@@ -5142,12 +5454,12 @@
                         />
                       </div>
                       ${dayObj.slots.map((slot, sIdx) => {
-          const isDiniyyahSlot = sIdx === 3 || slot.kategori === 'Diniyyah';
-          const currentVal = getSlotSubjectForClass(slot, activeClass.id);
-          const badgeLabel = isDiniyyahSlot
-            ? 'Sesi 4 — Mapel Diniyyah'
-            : `Sesi ${slot.sesi} — Mapel ${activeClass.name}`;
-          return `
+                        const isDiniyyahSlot = sIdx === 3 || slot.kategori === 'Diniyyah';
+                        const currentVal = getSlotSubjectForClass(slot, activeClass.id);
+                        const badgeLabel = isDiniyyahSlot
+                          ? 'Sesi 4 — Mapel Diniyyah'
+                          : `Sesi ${slot.sesi} — Mapel ${activeClass.name}`;
+                        return `
                           <div class="bg-white p-2.5 rounded-lg border ${isDiniyyahSlot ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200/90'} space-y-1.5 shadow-2xs">
                             <div class="flex items-center justify-between gap-2">
                               <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${isDiniyyahSlot ? 'bg-amber-100 text-amber-800' : (activeClass.unit === 'MA' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700')}">
@@ -5169,10 +5481,10 @@
                             />
                           </div>
                         `;
-        }).join('')}
+                      }).join('')}
                     </div>
                   `;
-      }).join('')}
+                }).join('')}
               </div>
             </div>
           ` : `
@@ -5200,13 +5512,22 @@
         </div>
 
         <div id="print-mount">
-          ${isAll
-          ? SCHEDULE_CLASSES.map(cls => renderScheduleF4Sheet(cls)).join('')
-          : renderScheduleF4Sheet(activeClass)
-        }
+          ${activeClassId === 'REKAP_MTS'
+            ? renderScheduleRekapMtsF4Sheet()
+            : activeClassId === 'REKAP_MA'
+            ? renderScheduleRekapMaF4Sheet()
+            : activeClassId === 'REKAP_DINIYYAH'
+            ? renderScheduleRekapDiniyyahF4Sheet()
+            : activeClassId === 'REKAP_ALL'
+            ? [renderScheduleRekapMtsF4Sheet(), renderScheduleRekapMaF4Sheet(), renderScheduleRekapDiniyyahF4Sheet()].join('')
+            : isAll
+            ? SCHEDULE_CLASSES.map(cls => renderScheduleF4Sheet(cls)).join('')
+            : renderScheduleF4Sheet(activeClass)
+          }
         </div>
       `;
     }
+
     // MODUL 6: JADWAL PENGAWAS BERDASARKAN MATA PELAJARAN DI RUANGAN (1 RUANGAN = 1 ORANG PENGAWAS)
     function renderModuleJadwalPengawas() {
       const activeTab = state.proctorActiveTab || 'matriks';
@@ -8625,7 +8946,15 @@
         extra = ' - Daftar Peserta Ujian Susulan';
       } else if (state.activeMenu === 'jadwal_mapel') {
         if (state.selectedScheduleClass === 'ALL') {
-          extra = ' - Semua 6 Kelas';
+          extra = ' - Semua 6 Kelas Satuan';
+        } else if (state.selectedScheduleClass === 'REKAP_MTS') {
+          extra = ' - Rekapitulasi Jadwal Mapel MTs';
+        } else if (state.selectedScheduleClass === 'REKAP_MA') {
+          extra = ' - Rekapitulasi Jadwal Mapel MA';
+        } else if (state.selectedScheduleClass === 'REKAP_DINIYYAH') {
+          extra = ' - Rekapitulasi Jadwal Mapel Diniyyah';
+        } else if (state.selectedScheduleClass === 'REKAP_ALL') {
+          extra = ' - Rekapitulasi Jadwal 3 Jenjang (MTs, MA, Diniyyah)';
         } else {
           const cls = (SCHEDULE_CLASSES || []).find(c => c.id === state.selectedScheduleClass);
           extra = cls ? ' - ' + cls.name : '';
@@ -9181,8 +9510,9 @@
             }
           }
         } else if (menu === 'jadwal_mapel') {
-          for (const cls of SCHEDULE_CLASSES) {
-            state.selectedScheduleClass = cls.id;
+          const allOptions = ['REKAP_MTS', 'REKAP_MA', 'REKAP_DINIYYAH', ...SCHEDULE_CLASSES.map(c => c.id)];
+          for (const optId of allOptions) {
+            state.selectedScheduleClass = optId;
             const html = renderActiveWorkspace();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
@@ -10323,30 +10653,88 @@
         }
 
         if (menu === 'jadwal_mapel') {
-          const rows = [
-            ["HARI", "TANGGAL", "SESI", "WAKTU", "KATEGORI", "MAPEL MA", "MAPEL MTS", "MAPEL DINIYYAH"]
+          const wb = XLSX.utils.book_new();
+
+          // 1. Sheet Rekap MTs
+          const rowsMts = [
+            ["REKAPITULASI JADWAL MATA PELAJARAN MADRASAH TSANAWIYAH (MTS)"],
+            [`Tahun Pelajaran: ${state.settings.tahunAjaran || '2025/2026'}`],
+            [],
+            ["HARI", "TANGGAL", "SESI", "WAKTU", "KELAS VII", "KELAS VIII", "KELAS IX", "KATEGORI"]
           ];
           DAY_LIST.forEach(d => {
             const dObj = state.schedules[d];
             (dObj?.slots || []).forEach((s, idx) => {
               const isDin = idx === 3 || s.kategori === 'Diniyyah';
-              rows.push([
+              rowsMts.push([
                 d.toUpperCase(),
                 dObj.tanggal,
-                `Sesi ${s.sesi}`,
+                `Ke-${s.sesi}`,
                 `${s.waktu} WIB`,
-                isDin ? "Diniyyah" : "Sekolah",
-                s.mapel_ma || s.mapel || "-",
-                s.mapel_mts || s.mapel || "-",
-                isDin ? (s.mapel_ma || s.mapel_mts || s.mapel || "-") : "-"
+                getSlotSubjectForClass(s, 'MTS_7'),
+                getSlotSubjectForClass(s, 'MTS_8'),
+                getSlotSubjectForClass(s, 'MTS_9'),
+                isDin ? 'Mapel Diniyyah' : 'Mapel MTs'
               ]);
             });
           });
-          const ws = XLSX.utils.aoa_to_sheet(rows);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, "Jadwal_Ujian");
-          XLSX.writeFile(wb, "Jadwal_Mata_Pelajaran_Ujian.xlsx");
-          notify("Berhasil mengekspor Jadwal Ujian ke Excel (.xlsx).");
+          const wsMts = XLSX.utils.aoa_to_sheet(rowsMts);
+          XLSX.utils.book_append_sheet(wb, wsMts, "Rekap_MTs");
+
+          // 2. Sheet Rekap MA
+          const rowsMa = [
+            ["REKAPITULASI JADWAL MATA PELAJARAN MADRASAH ALIYAH (MA)"],
+            [`Tahun Pelajaran: ${state.settings.tahunAjaran || '2025/2026'}`],
+            [],
+            ["HARI", "TANGGAL", "SESI", "WAKTU", "KELAS X", "KELAS XI", "KELAS XII", "KATEGORI"]
+          ];
+          DAY_LIST.forEach(d => {
+            const dObj = state.schedules[d];
+            (dObj?.slots || []).forEach((s, idx) => {
+              const isDin = idx === 3 || s.kategori === 'Diniyyah';
+              rowsMa.push([
+                d.toUpperCase(),
+                dObj.tanggal,
+                `Ke-${s.sesi}`,
+                `${s.waktu} WIB`,
+                getSlotSubjectForClass(s, 'MA_10'),
+                getSlotSubjectForClass(s, 'MA_11'),
+                getSlotSubjectForClass(s, 'MA_12'),
+                isDin ? 'Mapel Diniyyah' : 'Mapel MA'
+              ]);
+            });
+          });
+          const wsMa = XLSX.utils.aoa_to_sheet(rowsMa);
+          XLSX.utils.book_append_sheet(wb, wsMa, "Rekap_MA");
+
+          // 3. Sheet Rekap Diniyyah
+          const rowsDin = [
+            ["REKAPITULASI JADWAL MATA PELAJARAN MADRASAH DINIYYAH"],
+            [`Tahun Pelajaran: ${state.settings.tahunAjaran || '2025/2026'}`],
+            [],
+            ["NO", "HARI", "TANGGAL", "WAKTU", "1 ULA (VII)", "2 ULA (VIII)", "3 ULA (IX)", "1 WUSTHO (X)", "2 WUSTHO (XI)", "3 WUSTHO (XII)"]
+          ];
+          DAY_LIST.forEach((d, dIdx) => {
+            const dObj = state.schedules[d];
+            const dinSlot = (dObj?.slots || []).find((s, idx) => idx === 3 || s.kategori === 'Diniyyah') || (dObj?.slots || [])[3] || {};
+            rowsDin.push([
+              dIdx + 1,
+              d.toUpperCase(),
+              dObj.tanggal,
+              `${dinSlot.waktu || '14:00 - 14:45'} WIB`,
+              getSlotSubjectForClass(dinSlot, 'MTS_7'),
+              getSlotSubjectForClass(dinSlot, 'MTS_8'),
+              getSlotSubjectForClass(dinSlot, 'MTS_9'),
+              getSlotSubjectForClass(dinSlot, 'MA_10'),
+              getSlotSubjectForClass(dinSlot, 'MA_11'),
+              getSlotSubjectForClass(dinSlot, 'MA_12')
+            ]);
+          });
+          const wsDin = XLSX.utils.aoa_to_sheet(rowsDin);
+          XLSX.utils.book_append_sheet(wb, wsDin, "Rekap_Diniyyah");
+
+          XLSX.writeFile(wb, "Rekapitulasi_Jadwal_Mata_Pelajaran.xlsx");
+          notify("Berhasil mengekspor Rekapitulasi Jadwal Mapel ke Excel (.xlsx).");
           return;
         }
 
