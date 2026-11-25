@@ -2029,14 +2029,12 @@
       `;
     }
 
-    function getDigitalSignatureMarkup(roleKey, customImgData, signerName, heightPx = 75) {
+    function getDigitalSignatureMarkup(roleKey, customImgData, signerName, heightPx = 54, maxWidthPx = 150) {
       if (state.settings.gunakanTtdDigital === false) {
         return `<div style="height: ${heightPx}px;"></div>`;
       }
       if (customImgData && customImgData.startsWith('data:image')) {
-        const imgMaxH = Math.round(heightPx * 1.35);
-        const imgMaxW = Math.round(Math.max(220, heightPx * 2.8));
-        return `<div style="min-height: ${heightPx}px; display: flex; align-items: center; justify-content: center; margin: 3px 0; padding: 2px 0;"><img src="${customImgData}" alt="TTD" style="max-height: ${imgMaxH}px; max-width: ${imgMaxW}px; width: auto; height: auto; object-fit: contain; filter: contrast(1.08); display: block;" /></div>`;
+        return `<div style="height: ${heightPx}px; display: flex; align-items: center; justify-content: center; margin: 2px 0;"><img src="${customImgData}" alt="TTD" style="max-height: ${heightPx}px; max-width: ${maxWidthPx}px; width: auto; height: auto; object-fit: contain; filter: contrast(1.05); display: block;" /></div>`;
       }
       const svgPaths = {
         KEPALA_MA: `<path d="M12,38 C28,10 42,46 58,18 C70,4 82,40 98,22 C114,8 128,34 156,16 M24,42 C68,34 118,30 168,28" stroke="#1E3A8A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -2045,9 +2043,10 @@
         KETUA_PANITIA: `<path d="M14,36 C32,6 46,44 64,14 C78,8 92,38 112,20 C128,10 144,34 166,18 M22,41 C72,33 122,31 170,27" stroke="#065F46" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
       };
       const pathMarkup = svgPaths[roleKey] || svgPaths.KETUA_PANITIA;
+      const svgHeight = Math.min(heightPx - 4, 44);
       return `
-        <div style="min-height: ${heightPx}px; display: flex; align-items: center; justify-content: center; position: relative; margin: 3px 0;">
-          <svg viewBox="0 0 185 50" style="height: ${Math.round(heightPx * 1.15)}px; width: auto; max-width: 220px; overflow: visible;">
+        <div style="height: ${heightPx}px; display: flex; align-items: center; justify-content: center; position: relative; margin: 2px 0;">
+          <svg viewBox="0 0 185 50" style="height: ${svgHeight}px; width: auto; max-width: ${maxWidthPx}px; overflow: visible;">
             ${pathMarkup}
           </svg>
         </div>
@@ -2081,10 +2080,9 @@
 
     function renderFooterTtdF4(mode = 'KETUA_ONLY', leftContent = '') {
       const s = state.settings;
-      const ttdKetua = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 75);
 
       if (mode === 'KETUA_CENTER' || mode === 'KETUA_TENGAH') {
-        const ttdKetuaCenter = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 72);
+        const ttdKetuaCenter = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 54, 160);
         return `
           <table style="width: 100%; margin-top: 10px; border: none; font-size: 10pt; page-break-inside: avoid;">
             <tr>
@@ -2092,9 +2090,7 @@
               <td style="width: 50%; text-align: center; border: none; vertical-align: top;">
                 ${s.kotaTanggal || ''}<br/>
                 Ketua Panitia Ujian,
-                <div style="min-height: 72px; display: flex; align-items: center; justify-content: center; margin: 3px 0;">
-                  ${ttdKetuaCenter}
-                </div>
+                ${ttdKetuaCenter}
                 <strong style="text-decoration: underline; font-size: 10.5pt;">${s.ketuaPanitia || ''}</strong><br/>
                 <span style="font-size: 9pt;">NIP/NIY. ${s.nipKetua || '-'}</span>
               </td>
@@ -2105,6 +2101,7 @@
       }
 
       if (mode === 'KETUA_ONLY') {
+        const ttdKetua = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 54, 160);
         return `
           <table style="width: 100%; margin-top: 14px; border: none; font-size: 10.5pt; page-break-inside: avoid;">
             <tr>
@@ -2144,7 +2141,8 @@
           headCustomImg = s.ttdKepalaDiniyyah;
         }
 
-        const ttdHead = getDigitalSignatureMarkup(headRoleKey, headCustomImg, headName, 75);
+        const ttdHead = getDigitalSignatureMarkup(headRoleKey, headCustomImg, headName, 52, 145);
+        const ttdKetua2 = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 52, 145);
 
         return `
           <table style="width: 100%; margin-top: 16px; border: none; font-size: 10.5pt; page-break-inside: avoid;">
@@ -2159,7 +2157,7 @@
               <td style="width: 50%; text-align: center; border: none; vertical-align: top;">
                 ${s.kotaTanggal}<br/>
                 Ketua Panitia Ujian,
-                ${ttdKetua}
+                ${ttdKetua2}
                 <strong style="text-decoration: underline;">${s.ketuaPanitia}</strong><br/>
                 NIP/NIY. ${s.nipKetua}
               </td>
@@ -2168,9 +2166,10 @@
         `;
       }
 
-      const ttdMA = getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 65);
-      const ttdMTS = getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 65);
-      const ttdDin = getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 65);
+      const ttdMA = getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 44, 115);
+      const ttdMTS = getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 44, 115);
+      const ttdDin = getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 44, 115);
+      const ttdKetua4 = getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 44, 115);
 
       return `
         <table style="width: 100%; margin-top: 14px; border: none; font-size: 9.5pt; page-break-inside: avoid;">
@@ -2195,7 +2194,7 @@
             </td>
             <td style="width: 25%; text-align: center; border: none; vertical-align: top;">
               ${s.kotaTanggal}<br/>Ketua Panitia
-              ${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 65)}
+              ${ttdKetua4}
               <strong style="text-decoration: underline;">${s.ketuaPanitia}</strong><br/>
               NIP/NIY. ${s.nipKetua}
             </td>
@@ -2840,9 +2839,7 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
-              </div>
+              ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 46, 130)}
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
             </div>
@@ -2918,9 +2915,7 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
-              </div>
+              ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 46, 130)}
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
             </div>
@@ -2993,9 +2988,7 @@
             <div style="text-align: center; min-width: 200px; font-size: 8pt; line-height: 1.2;">
               <div>${state.settings.tempatSurat || 'Wonosobo'}, ${state.settings.tanggalSurat || '20 November 2026'}</div>
               <div style="font-weight: bold; margin-top: 1px;">Ketua Panitia Ujian,</div>
-              <div style="min-height: 52px; display: flex; align-items: center; justify-content: center;">
-                ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52)}
-              </div>
+              ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 46, 130)}
               <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ahmad Fauzi, M.Pd.'}</div>
               <div style="font-size: 7pt; color: #334155;">NIP. ${state.settings.nipKetuaPanitia || '-'}</div>
             </div>
@@ -3129,14 +3122,14 @@
             </thead>
             <tbody>
               ${DAY_LIST.map(day => {
-                const dObj = state.schedules[day];
-                return (dObj?.slots || []).map((s, idx) => {
-                  const isDin = isDinSlot(idx, s);
-                  const mapel7 = getSlotSubjectForClass(s, 'MTS_7');
-                  const mapel8 = getSlotSubjectForClass(s, 'MTS_8');
-                  const mapel9 = getSlotSubjectForClass(s, 'MTS_9');
-                  const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MTs (${idx + 1})`;
-                  return `
+        const dObj = state.schedules[day];
+        return (dObj?.slots || []).map((s, idx) => {
+          const isDin = isDinSlot(idx, s);
+          const mapel7 = getSlotSubjectForClass(s, 'MTS_7');
+          const mapel8 = getSlotSubjectForClass(s, 'MTS_8');
+          const mapel9 = getSlotSubjectForClass(s, 'MTS_9');
+          const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MTs (${idx + 1})`;
+          return `
                     <tr style="${isDin ? 'background: #f0fdf4;' : (idx % 2 === 1 ? 'background: #f8fafc;' : '')}">
                       ${idx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; text-align: center; font-weight: bold; vertical-align: middle;">${day.toUpperCase()}<br/><span style="font-size: 8.5pt; font-weight: normal;">${dObj.tanggal}</span></td>` : ''}
                       <td style="border: 1px solid #000000; text-align: center; font-weight: bold;">Ke-${s.sesi}</td>
@@ -3147,8 +3140,8 @@
                       <td style="border: 1px solid #000000; text-align: center; font-size: 8pt; font-weight: ${isDin ? 'bold' : 'normal'}; color: ${isDin ? '#047857' : '#334155'};">${kategoriText}</td>
                     </tr>
                   `;
-                }).join('');
-              }).join('')}
+        }).join('');
+      }).join('')}
             </tbody>
           </table>
 
@@ -3188,14 +3181,14 @@
             </thead>
             <tbody>
               ${DAY_LIST.map(day => {
-                const dObj = state.schedules[day];
-                return (dObj?.slots || []).map((s, idx) => {
-                  const isDin = isDinSlot(idx, s);
-                  const mapel10 = getSlotSubjectForClass(s, 'MA_10');
-                  const mapel11 = getSlotSubjectForClass(s, 'MA_11');
-                  const mapel12 = getSlotSubjectForClass(s, 'MA_12');
-                  const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MA (${idx + 1})`;
-                  return `
+        const dObj = state.schedules[day];
+        return (dObj?.slots || []).map((s, idx) => {
+          const isDin = isDinSlot(idx, s);
+          const mapel10 = getSlotSubjectForClass(s, 'MA_10');
+          const mapel11 = getSlotSubjectForClass(s, 'MA_11');
+          const mapel12 = getSlotSubjectForClass(s, 'MA_12');
+          const kategoriText = isDin ? 'Mapel Diniyyah' : `Mapel MA (${idx + 1})`;
+          return `
                     <tr style="${isDin ? 'background: #f5f3ff;' : (idx % 2 === 1 ? 'background: #f8fafc;' : '')}">
                       ${idx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; text-align: center; font-weight: bold; vertical-align: middle;">${day.toUpperCase()}<br/><span style="font-size: 8.5pt; font-weight: normal;">${dObj.tanggal}</span></td>` : ''}
                       <td style="border: 1px solid #000000; text-align: center; font-weight: bold;">Ke-${s.sesi}</td>
@@ -3206,8 +3199,8 @@
                       <td style="border: 1px solid #000000; text-align: center; font-size: 8pt; font-weight: ${isDin ? 'bold' : 'normal'}; color: ${isDin ? '#4338ca' : '#334155'};">${kategoriText}</td>
                     </tr>
                   `;
-                }).join('');
-              }).join('')}
+        }).join('');
+      }).join('')}
             </tbody>
           </table>
 
@@ -3249,15 +3242,15 @@
             </thead>
             <tbody>
               ${DAY_LIST.map((day, dIdx) => {
-                const dObj = state.schedules[day];
-                const dinSlot = (dObj?.slots || []).find((s, idx) => idx === 3 || s.kategori === 'Diniyyah') || (dObj?.slots || [])[3] || {};
-                const mapelUla1 = getSlotSubjectForClass(dinSlot, 'MTS_7');
-                const mapelUla2 = getSlotSubjectForClass(dinSlot, 'MTS_8');
-                const mapelUla3 = getSlotSubjectForClass(dinSlot, 'MTS_9');
-                const mapelWustho1 = getSlotSubjectForClass(dinSlot, 'MA_10');
-                const mapelWustho2 = getSlotSubjectForClass(dinSlot, 'MA_11');
-                const mapelWustho3 = getSlotSubjectForClass(dinSlot, 'MA_12');
-                return `
+        const dObj = state.schedules[day];
+        const dinSlot = (dObj?.slots || []).find((s, idx) => idx === 3 || s.kategori === 'Diniyyah') || (dObj?.slots || [])[3] || {};
+        const mapelUla1 = getSlotSubjectForClass(dinSlot, 'MTS_7');
+        const mapelUla2 = getSlotSubjectForClass(dinSlot, 'MTS_8');
+        const mapelUla3 = getSlotSubjectForClass(dinSlot, 'MTS_9');
+        const mapelWustho1 = getSlotSubjectForClass(dinSlot, 'MA_10');
+        const mapelWustho2 = getSlotSubjectForClass(dinSlot, 'MA_11');
+        const mapelWustho3 = getSlotSubjectForClass(dinSlot, 'MA_12');
+        return `
                   <tr class="${dIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}">
                     <td style="border: 1px solid #000000; font-weight: bold; padding: 4px 2px;">${dIdx + 1}</td>
                     <td style="border: 1px solid #000000; text-align: center; font-weight: bold; padding: 4px 4px;">
@@ -3274,7 +3267,7 @@
                     <td style="border: 1px solid #000000; font-weight: 700; padding: 4px 3px; color: #4338ca;">${mapelWustho3}</td>
                   </tr>
                 `;
-              }).join('')}
+      }).join('')}
             </tbody>
           </table>
 
@@ -5198,22 +5191,22 @@
                 </span>
                 <h2 class="text-base font-extrabold text-slate-800 uppercase tracking-wide">
                   ${activeClassId === 'REKAP_MTS'
-                    ? 'Rekapitulasi Jadwal Mapel Madrasah Tsanawiyah (MTs)'
-                    : activeClassId === 'REKAP_MA'
-                    ? 'Rekapitulasi Jadwal Mapel Madrasah Aliyah (MA)'
-                    : activeClassId === 'REKAP_DINIYYAH'
-                    ? 'Rekapitulasi Jadwal Mapel Madrasah Diniyyah (Ula & Wustho)'
-                    : activeClassId === 'REKAP_ALL'
-                    ? 'Rekapitulasi Jadwal Mata Pelajaran 3 Jenjang (MTs, MA, Diniyyah)'
-                    : 'Jadwal Mata Pelajaran ' + activeClass.name
-                  }
+          ? 'Rekapitulasi Jadwal Mapel Madrasah Tsanawiyah (MTs)'
+          : activeClassId === 'REKAP_MA'
+            ? 'Rekapitulasi Jadwal Mapel Madrasah Aliyah (MA)'
+            : activeClassId === 'REKAP_DINIYYAH'
+              ? 'Rekapitulasi Jadwal Mapel Madrasah Diniyyah (Ula & Wustho)'
+              : activeClassId === 'REKAP_ALL'
+                ? 'Rekapitulasi Jadwal Mata Pelajaran 3 Jenjang (MTs, MA, Diniyyah)'
+                : 'Jadwal Mata Pelajaran ' + activeClass.name
+        }
                 </h2>
               </div>
               <p class="text-xs text-slate-500 mt-1">
                 ${isRekap
-                  ? 'Format rekapitulasi per jenjang menampilkan seluruh kelas berdampingan dalam 1 lembar F4 resmi, siap cetak dan dibagikan.'
-                  : 'Setiap kelas memiliki mata pelajaran yang berbeda untuk setiap sesi ujian. Pilih kelas di bawah untuk mengedit atau melihat pratinjau.'
-                }
+          ? 'Format rekapitulasi per jenjang menampilkan seluruh kelas berdampingan dalam 1 lembar F4 resmi, siap cetak dan dibagikan.'
+          : 'Setiap kelas memiliki mata pelajaran yang berbeda untuk setiap sesi ujian. Pilih kelas di bawah untuk mengedit atau melihat pratinjau.'
+        }
               </p>
             </div>
 
@@ -5389,44 +5382,44 @@
                 <div>
                   <h4 class="text-xs font-extrabold uppercase tracking-wide">
                     ${activeClassId === 'REKAP_MTS'
-                      ? 'Mode Pratinjau Rekapitulasi Jadwal MTs (Kelas VII, VIII, IX)'
-                      : activeClassId === 'REKAP_MA'
-                      ? 'Mode Pratinjau Rekapitulasi Jadwal MA (Kelas X, XI, XII)'
-                      : activeClassId === 'REKAP_DINIYYAH'
-                      ? 'Mode Pratinjau Rekapitulasi Jadwal Diniyyah (Tingkat Ula & Tingkat Wustho)'
-                      : 'Mode Cetak Semua Rekapitulasi 3 Jenjang (MTs, MA, Diniyyah)'}
+            ? 'Mode Pratinjau Rekapitulasi Jadwal MTs (Kelas VII, VIII, IX)'
+            : activeClassId === 'REKAP_MA'
+              ? 'Mode Pratinjau Rekapitulasi Jadwal MA (Kelas X, XI, XII)'
+              : activeClassId === 'REKAP_DINIYYAH'
+                ? 'Mode Pratinjau Rekapitulasi Jadwal Diniyyah (Tingkat Ula & Tingkat Wustho)'
+                : 'Mode Cetak Semua Rekapitulasi 3 Jenjang (MTs, MA, Diniyyah)'}
                   </h4>
                   <p class="text-[11px] opacity-80 mt-0.5">
                     ${activeClassId === 'REKAP_MTS'
-                      ? 'Menampilkan rekap seluruh mata pelajaran tingkat MTs berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
-                      : activeClassId === 'REKAP_MA'
-                      ? 'Menampilkan rekap seluruh mata pelajaran tingkat MA berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
-                      : activeClassId === 'REKAP_DINIYYAH'
-                      ? 'Menampilkan rekap seluruh mata pelajaran Diniyyah (Ula & Wustho) pada Sesi IV pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
-                      : 'Menampilkan seluruh 3 lembar rekapitulasi jenjang (MTs, MA, dan Diniyyah) secara berurutan siap dicetak/diekspor.'}
+            ? 'Menampilkan rekap seluruh mata pelajaran tingkat MTs berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+            : activeClassId === 'REKAP_MA'
+              ? 'Menampilkan rekap seluruh mata pelajaran tingkat MA berdampingan pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+              : activeClassId === 'REKAP_DINIYYAH'
+                ? 'Menampilkan rekap seluruh mata pelajaran Diniyyah (Ula & Wustho) pada Sesi IV pada lembar F4 resmi, siap cetak atau ekspor Word/PDF.'
+                : 'Menampilkan seluruh 3 lembar rekapitulasi jenjang (MTs, MA, dan Diniyyah) secara berurutan siap dicetak/diekspor.'}
                   </p>
                 </div>
               </div>
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10.5px] font-bold text-slate-500 mr-1">Edit Mata Pelajaran:</span>
                 ${activeClassId === 'REKAP_MTS'
-                  ? SCHEDULE_CLASSES.filter(c => c.unit === 'MTs').map(c => `
+            ? SCHEDULE_CLASSES.filter(c => c.unit === 'MTs').map(c => `
                     <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold transition shadow-2xs">
                       Edit ${c.shortName}
                     </button>
                   `).join('')
-                  : activeClassId === 'REKAP_MA'
-                  ? SCHEDULE_CLASSES.filter(c => c.unit === 'MA').map(c => `
+            : activeClassId === 'REKAP_MA'
+              ? SCHEDULE_CLASSES.filter(c => c.unit === 'MA').map(c => `
                     <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-100 text-indigo-800 border border-indigo-300 text-[11px] font-bold transition shadow-2xs">
                       Edit ${c.shortName}
                     </button>
                   `).join('')
-                  : SCHEDULE_CLASSES.map(c => `
+              : SCHEDULE_CLASSES.map(c => `
                     <button type="button" onclick="window.appActions.setScheduleClass('${c.id}')" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[10px] font-bold transition">
                       ${c.shortName}
                     </button>
                   `).join('')
-                }
+          }
               </div>
             </div>
           ` : !isAll ? `
@@ -5441,8 +5434,8 @@
 
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                 ${DAY_LIST.map(day => {
-                  const dayObj = state.schedules[day];
-                  return `
+            const dayObj = state.schedules[day];
+            return `
                     <div class="border border-slate-200/80 rounded-xl p-3 bg-slate-50/70 space-y-2.5 shadow-sm">
                       <div class="flex items-center justify-between">
                         <span class="px-2.5 py-0.5 rounded-full ${activeClass.unit === 'MA' ? 'bg-indigo-600' : 'bg-emerald-600'} text-white text-[11px] font-extrabold uppercase tracking-wide">${day}</span>
@@ -5454,12 +5447,12 @@
                         />
                       </div>
                       ${dayObj.slots.map((slot, sIdx) => {
-                        const isDiniyyahSlot = sIdx === 3 || slot.kategori === 'Diniyyah';
-                        const currentVal = getSlotSubjectForClass(slot, activeClass.id);
-                        const badgeLabel = isDiniyyahSlot
-                          ? 'Sesi 4 — Mapel Diniyyah'
-                          : `Sesi ${slot.sesi} — Mapel ${activeClass.name}`;
-                        return `
+              const isDiniyyahSlot = sIdx === 3 || slot.kategori === 'Diniyyah';
+              const currentVal = getSlotSubjectForClass(slot, activeClass.id);
+              const badgeLabel = isDiniyyahSlot
+                ? 'Sesi 4 — Mapel Diniyyah'
+                : `Sesi ${slot.sesi} — Mapel ${activeClass.name}`;
+              return `
                           <div class="bg-white p-2.5 rounded-lg border ${isDiniyyahSlot ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200/90'} space-y-1.5 shadow-2xs">
                             <div class="flex items-center justify-between gap-2">
                               <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${isDiniyyahSlot ? 'bg-amber-100 text-amber-800' : (activeClass.unit === 'MA' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700')}">
@@ -5481,10 +5474,10 @@
                             />
                           </div>
                         `;
-                      }).join('')}
+            }).join('')}
                     </div>
                   `;
-                }).join('')}
+          }).join('')}
               </div>
             </div>
           ` : `
@@ -5513,17 +5506,17 @@
 
         <div id="print-mount">
           ${activeClassId === 'REKAP_MTS'
-            ? renderScheduleRekapMtsF4Sheet()
-            : activeClassId === 'REKAP_MA'
+          ? renderScheduleRekapMtsF4Sheet()
+          : activeClassId === 'REKAP_MA'
             ? renderScheduleRekapMaF4Sheet()
             : activeClassId === 'REKAP_DINIYYAH'
-            ? renderScheduleRekapDiniyyahF4Sheet()
-            : activeClassId === 'REKAP_ALL'
-            ? [renderScheduleRekapMtsF4Sheet(), renderScheduleRekapMaF4Sheet(), renderScheduleRekapDiniyyahF4Sheet()].join('')
-            : isAll
-            ? SCHEDULE_CLASSES.map(cls => renderScheduleF4Sheet(cls)).join('')
-            : renderScheduleF4Sheet(activeClass)
-          }
+              ? renderScheduleRekapDiniyyahF4Sheet()
+              : activeClassId === 'REKAP_ALL'
+                ? [renderScheduleRekapMtsF4Sheet(), renderScheduleRekapMaF4Sheet(), renderScheduleRekapDiniyyahF4Sheet()].join('')
+                : isAll
+                  ? SCHEDULE_CLASSES.map(cls => renderScheduleF4Sheet(cls)).join('')
+                  : renderScheduleF4Sheet(activeClass)
+        }
         </div>
       `;
     }
@@ -5620,11 +5613,11 @@
               </h2>
               <p class="text-xs text-slate-500">
                 ${activeTab === 'nama'
-                  ? 'Layout jadwal pengawas 12 ruangan lengkap dengan nama pengawas (menggantikan kode), format standar F4 Landscape siap cetak dan ekspor Word/PDF.'
-                  : activeTab === 'rekap_harian'
-                  ? 'Rekapitulasi jadwal pengawas per hari untuk dibagikan kepada dewan guru via WhatsApp atau dicetak sebagai arsip panitia.'
-                  : 'Sesuai format resmi At-Tahiyyah: Tabel jadwal pengawas 12 ruangan (kiri) berdampingan dengan daftar nama & kode pengawas (kanan).'
-                }
+          ? 'Layout jadwal pengawas 12 ruangan lengkap dengan nama pengawas (menggantikan kode), format standar F4 Landscape siap cetak dan ekspor Word/PDF.'
+          : activeTab === 'rekap_harian'
+            ? 'Rekapitulasi jadwal pengawas per hari untuk dibagikan kepada dewan guru via WhatsApp atau dicetak sebagai arsip panitia.'
+            : 'Sesuai format resmi At-Tahiyyah: Tabel jadwal pengawas 12 ruangan (kiri) berdampingan dengan daftar nama & kode pengawas (kanan).'
+        }
               </p>
             </div>
 
@@ -5825,8 +5818,8 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                       ${state.proctors.slice(Math.ceil(state.proctors.length / 2)).map((pr, idx) => {
-                        const actualIdx = Math.ceil(state.proctors.length / 2) + idx;
-                        return `
+          const actualIdx = Math.ceil(state.proctors.length / 2) + idx;
+          return `
                           <tr class="hover:bg-slate-50">
                             <td class="py-1.5 px-2 text-center text-slate-500 font-bold">${actualIdx + 1}</td>
                             <td class="py-1.5 px-3 text-center font-mono font-extrabold text-indigo-700 bg-indigo-50/50">${pr.kode || '-'}</td>
@@ -5837,7 +5830,7 @@
                             </td>
                           </tr>
                         `;
-                      }).join('')}
+        }).join('')}
                     </tbody>
                   </table>
                 </div>
@@ -5877,10 +5870,10 @@
                 </thead>
                 <tbody>
                   ${dayConfigs.map(d => {
-                    return sessionTimes.map((st, sIdx) => {
-                      const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-                      const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
-                      return `
+          return sessionTimes.map((st, sIdx) => {
+            const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+            const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+            return `
                         <tr class="${sIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-indigo-50/30">
                           ${sIdx === 0 ? `<td rowspan="4" class="p-2 font-bold text-slate-800 border border-slate-200 align-middle">${d.dayKey}</td>` : ''}
                           <td class="p-1 font-bold text-indigo-700 border border-slate-200">${st.jamKe}</td>
@@ -5898,8 +5891,8 @@
                           `).join('')}
                         </tr>
                       `;
-                    }).join('');
-                  }).join('')}
+          }).join('');
+        }).join('')}
                 </tbody>
               </table>
             </div>
@@ -5949,30 +5942,30 @@
                 </thead>
                 <tbody>
                   ${dayConfigs.map(d => {
-                    return sessionTimes.map((st, sIdx) => {
-                      const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-                      const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
-                      return `
+          return sessionTimes.map((st, sIdx) => {
+            const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+            const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+            return `
                         <tr>
                           ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: 800; padding: 2px 2px; vertical-align: middle;">${d.no}</td>` : ''}
                           ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: bold; padding: 2px 3px; vertical-align: middle; text-align: center;">${d.label}</td>` : ''}
                           <td style="border: 1px solid #000000; font-weight: 800; padding: 2px 1px; background: ${st.sesi === 4 ? '#ecfdf5' : '#ffffff'};">${st.jamKe}</td>
                           <td style="border: 1px solid #000000; padding: 2px 1px; font-family: monospace; font-size: 6.5pt;">${slotWaktu}</td>
                           ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(rIdx => {
-                            const code = (rowVals[rIdx] || '').trim().toUpperCase();
-                            const pr = proctorMap[code];
-                            const nama = pr ? pr.nama : (code ? code : '-');
-                            return `
+              const code = (rowVals[rIdx] || '').trim().toUpperCase();
+              const pr = proctorMap[code];
+              const nama = pr ? pr.nama : (code ? code : '-');
+              return `
                               <td style="border: 1px solid #000000; padding: 2px 1px; text-align: center; vertical-align: middle;">
                                 <div style="font-weight: 700; font-size: 6.8pt; line-height: 1.1; color: #0f172a; word-break: break-word;">${nama}</div>
                                 ${code && pr ? `<span style="font-size: 5.5pt; font-weight: 800; color: #4338ca; display: block; line-height: 1;">(${code})</span>` : ''}
                               </td>
                             `;
-                          }).join('')}
+            }).join('')}
                         </tr>
                       `;
-                    }).join('');
-                  }).join('')}
+          }).join('');
+        }).join('')}
                 </tbody>
               </table>
 
@@ -5990,7 +5983,7 @@
                   <td style="width: 40%; border: none; vertical-align: top; text-align: center;">
                     <div>${state.settings.kotaTanggal}</div>
                     <div style="font-weight: bold;">Ketua Panitia Ujian,</div>
-                    ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 60)}
+                    ${getDigitalSignatureMarkup('KETUA_PANITIA', state.settings.ttdKetuaPanitia, state.settings.ketuaPanitia, 52, 145)}
                     <div style="font-weight: bold; text-decoration: underline;">${state.settings.ketuaPanitia || 'Ust. Muhammad Ridwan, S.Pd.'}</div>
                     <div>NIP/NIY. ${state.settings.nipKetua || '-'}</div>
                   </td>
@@ -6002,36 +5995,36 @@
             <!-- FORMAT 2: REKAPAN PENGAWAS PER HARI (SHARE GURU & CETAK F4) -->
             <!-- ================================================= -->
             ${daysForRekap.map((d, dIdx) => {
-              // Hitung tugas masing-masing guru pada hari ini
-              const teacherSummary = {};
-              sessionTimes.forEach(st => {
-                const rowCodes = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-                for (let r = 1; r <= 12; r++) {
-                  const code = (rowCodes[r - 1] || '').trim().toUpperCase();
-                  if (code) {
-                    const pr = proctorMap[code];
-                    const tName = pr ? pr.nama : `Pengawas (${code})`;
-                    if (!teacherSummary[tName]) {
-                      teacherSummary[tName] = {
-                        nama: tName,
-                        kode: code,
-                        jabatan: pr ? pr.jabatan : (st.sesi === 4 ? 'Guru Diniyyah' : 'Guru MTs/MA'),
-                        sesi1: '',
-                        sesi2: '',
-                        sesi3: '',
-                        sesi4: '',
-                        total: 0
-                      };
-                    }
-                    teacherSummary[tName]['sesi' + st.sesi] = `R.${String(r).padStart(2, '0')}`;
-                    teacherSummary[tName].total += 1;
-                  }
+          // Hitung tugas masing-masing guru pada hari ini
+          const teacherSummary = {};
+          sessionTimes.forEach(st => {
+            const rowCodes = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+            for (let r = 1; r <= 12; r++) {
+              const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+              if (code) {
+                const pr = proctorMap[code];
+                const tName = pr ? pr.nama : `Pengawas (${code})`;
+                if (!teacherSummary[tName]) {
+                  teacherSummary[tName] = {
+                    nama: tName,
+                    kode: code,
+                    jabatan: pr ? pr.jabatan : (st.sesi === 4 ? 'Guru Diniyyah' : 'Guru MTs/MA'),
+                    sesi1: '',
+                    sesi2: '',
+                    sesi3: '',
+                    sesi4: '',
+                    total: 0
+                  };
                 }
-              });
+                teacherSummary[tName]['sesi' + st.sesi] = `R.${String(r).padStart(2, '0')}`;
+                teacherSummary[tName].total += 1;
+              }
+            }
+          });
 
-              const teacherList = Object.values(teacherSummary).sort((a, b) => a.nama.localeCompare(b.nama));
+          const teacherList = Object.values(teacherSummary).sort((a, b) => a.nama.localeCompare(b.nama));
 
-              return `
+          return `
                 <div class="f4-sheet" style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; padding: 10mm 12mm; background: #ffffff; color: #000000; min-height: 297mm; box-sizing: border-box; ${dIdx > 0 ? 'page-break-before: always; break-before: page; margin-top: 15px;' : ''}">
                   
                   <!-- KOP SURAT RESMI AT-TAHIYYAH -->
@@ -6075,21 +6068,21 @@
                     </thead>
                     <tbody>
                       ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => {
-                        const maleCutoff = Math.max(1, Math.min(11, Number(state.maleRoomCount) || 7));
-                        const isMale = r <= maleCutoff;
-                        const roomLabel = `Ruang ${String(r).padStart(2, '0')}`;
-                        const genderBadge = isMale ? 'Pa' : 'Pi';
+            const maleCutoff = Math.max(1, Math.min(11, Number(state.maleRoomCount) || 7));
+            const isMale = r <= maleCutoff;
+            const roomLabel = `Ruang ${String(r).padStart(2, '0')}`;
+            const genderBadge = isMale ? 'Pa' : 'Pi';
 
-                        const getCellText = (sesiNum) => {
-                          const rowCodes = state.proctorMatrix?.[d.dayKey]?.[sesiNum] || [];
-                          const code = (rowCodes[r - 1] || '').trim().toUpperCase();
-                          if (!code) return '<span style="color: #94a3b8;">-</span>';
-                          const pr = proctorMap[code];
-                          const nama = pr ? pr.nama : `Pengawas (${code})`;
-                          return `<div style="font-weight: 700; color: #0f172a; line-height: 1.15;">${nama}</div><span style="font-size: 6.8pt; color: #4338ca; font-weight: 800;">[${code}]</span>`;
-                        };
+            const getCellText = (sesiNum) => {
+              const rowCodes = state.proctorMatrix?.[d.dayKey]?.[sesiNum] || [];
+              const code = (rowCodes[r - 1] || '').trim().toUpperCase();
+              if (!code) return '<span style="color: #94a3b8;">-</span>';
+              const pr = proctorMap[code];
+              const nama = pr ? pr.nama : `Pengawas (${code})`;
+              return `<div style="font-weight: 700; color: #0f172a; line-height: 1.15;">${nama}</div><span style="font-size: 6.8pt; color: #4338ca; font-weight: 800;">[${code}]</span>`;
+            };
 
-                        return `
+            return `
                           <tr class="${r % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}">
                             <td style="border: 1px solid #000000; font-weight: 800; padding: 3px 2px;">
                               ${roomLabel} <span style="font-size: 7pt; color: ${isMale ? '#1e40af' : '#9d174d'};">(${genderBadge})</span>
@@ -6100,7 +6093,7 @@
                             <td style="border: 1px solid #000000; padding: 2.5px 3px; background: #f0fdf4;">${getCellText(4)}</td>
                           </tr>
                         `;
-                      }).join('')}
+          }).join('')}
                     </tbody>
                   </table>
 
@@ -6154,7 +6147,7 @@
                   `)}
                 </div>
               `;
-            }).join('')}
+        }).join('')}
           ` : `
             <!-- ================================================= -->
             <!-- FORMAT 3: PRATINJAU MATRIKS RESMI KODE (F4 LANDSCAPE SESUAI GAMBAR) -->
@@ -6206,10 +6199,10 @@
                       </thead>
                       <tbody>
                         ${dayConfigs.map(d => {
-                          return sessionTimes.map((st, sIdx) => {
-                            const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
-                            const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
-                            return `
+          return sessionTimes.map((st, sIdx) => {
+            const rowVals = state.proctorMatrix?.[d.dayKey]?.[st.sesi] || [];
+            const slotWaktu = getProctorSlotWaktu(d.dayKey, st.sesi);
+            return `
                               <tr>
                                 ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: 800; padding: 3px 2px; vertical-align: middle;">${d.no}</td>` : ''}
                                 ${sIdx === 0 ? `<td rowspan="4" style="border: 1px solid #000000; font-weight: bold; padding: 3px 4px; vertical-align: middle; text-align: center;">${d.label}</td>` : ''}
@@ -6220,8 +6213,8 @@
                                 `).join('')}
                               </tr>
                             `;
-                          }).join('');
-                        }).join('')}
+          }).join('');
+        }).join('')}
                       </tbody>
                     </table>
                   </td>
@@ -7589,12 +7582,12 @@
 
         <div id="print-mount">
           ${chunks.map((chunk, pageIdx) => {
-            const isLastPage = pageIdx === chunks.length - 1;
-            const startNumber = pageIdx * MAX_PER_PAGE;
-            const pageSubtitle = chunks.length > 1 ? ` (HALAMAN ${pageIdx + 1}/${chunks.length})` : '';
-            const isDin = state.selectedKelasType === 'DINIYYAH';
+        const isLastPage = pageIdx === chunks.length - 1;
+        const startNumber = pageIdx * MAX_PER_PAGE;
+        const pageSubtitle = chunks.length > 1 ? ` (HALAMAN ${pageIdx + 1}/${chunks.length})` : '';
+        const isDin = state.selectedKelasType === 'DINIYYAH';
 
-            return `
+        return `
               <div class="f4-sheet">
                 ${renderKopSuratF4(`DAFTAR NILAI UJIAN ${jenisLabel} — KELAS ${activeClass.toUpperCase()}${pageSubtitle}`)}
 
@@ -7632,9 +7625,9 @@
                         </td>
                       </tr>
                     ` : chunk.map((p, idx) => {
-                      const noUrut = startNumber + idx + 1;
-                      const kelasVal = isDin ? p.kelas_diniyyah : p.kelas_sekolah;
-                      return `
+          const noUrut = startNumber + idx + 1;
+          const kelasVal = isDin ? p.kelas_diniyyah : p.kelas_sekolah;
+          return `
                         <tr>
                           <td style="text-align: center; font-weight: bold; padding: 2.5px 2px;">${noUrut}</td>
                           <td style="text-align: center; font-weight: bold; font-family: monospace; letter-spacing: 0.3px; padding: 2.5px 3px;">${p.no_peserta || '-'}</td>
@@ -7644,7 +7637,7 @@
                           <td style="text-align: center; padding: 2.5px 3px;">&nbsp;</td>
                         </tr>
                       `;
-                    }).join('')}
+        }).join('')}
                   </tbody>
                 </table>
 
@@ -7673,7 +7666,7 @@
                 `}
               </div>
             `;
-          }).join('')}
+      }).join('')}
         </div>
       `;
     }
@@ -7768,7 +7761,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 58)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_MA', s.ttdKepalaMA, s.kepalaMA, 40, 110)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaMA')" />
@@ -7789,7 +7782,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 58)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_MTS', s.ttdKepalaMTS, s.kepalaMTS, 40, 110)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaMTS')" />
@@ -7810,7 +7803,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 58)}</div>
+                    <div>${getDigitalSignatureMarkup('KEPALA_DINIYYAH', s.ttdKepalaDiniyyah, s.kepalaDiniyyah, 40, 110)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKepalaDiniyyah')" />
@@ -7831,7 +7824,7 @@
                   </div>
                   <div class="flex items-center justify-between bg-white p-2 rounded border border-indigo-200">
                     <div class="text-[11px] text-slate-500">Pratinjau TTD Digital:</div>
-                    <div>${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 58)}</div>
+                    <div>${getDigitalSignatureMarkup('KETUA_PANITIA', s.ttdKetuaPanitia, s.ketuaPanitia, 40, 110)}</div>
                     <label class="px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold text-[10px] cursor-pointer">
                       Upload PNG
                       <input type="file" accept="image/*" class="hidden" onchange="window.appActions.uploadSignature(event, 'ttdKetuaPanitia')" />
